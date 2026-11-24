@@ -6,8 +6,7 @@
 <title>okpublisher</title>
 <meta name="description" content="Ένα ΟΚ τον μήνα. Posts, reels και stories για την επιχείρησή σας, με μία έγκριση τον μήνα. One monthly OK: we create and publish your Instagram and Facebook.">
 <link rel="icon" href="img/favicon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
 /* VOICE occasion: friendly, confident, plain words for small business owners
    IDEA the monthly wall planner that gets one big OK stamp
@@ -143,6 +142,9 @@ form{background:#fff;color:var(--ink);border-radius:22px;padding:clamp(18px,3vw,
 form .w{grid-column:1/-1}
 @media(max-width:560px){form{grid-template-columns:1fr}}
 label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+label.chk{display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:14px;margin:0;cursor:pointer}
+label.chk input{width:20px;min-height:0;height:20px;margin:2px 0 0;flex:none;accent-color:var(--v)}
+form .note{margin:0;font-size:13px;color:var(--mut)}
 input,select,textarea{width:100%;font:16px Manrope,sans-serif;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);min-height:48px}
 textarea{min-height:110px;resize:vertical}
 .hp{position:absolute;left:-9999px}
@@ -271,6 +273,9 @@ footer a{color:#fff}
     <div><label for="f-plan"><span class="el">Πακέτο</span><span class="en">Plan</span></label><select id="f-plan" name="plan"></select></div>
     <div><label for="f-ig"><span class="el">Instagram ή Facebook (προαιρετικό)</span><span class="en">Instagram or Facebook (optional)</span></label><input id="f-ig" name="social" placeholder="@"></div>
     <div class="w"><label for="f-msg"><span class="el">Τι κάνει η επιχείρησή σας;</span><span class="en">What does your business do?</span></label><textarea id="f-msg" name="message"></textarea></div>
+    <label class="w chk"><input type="checkbox" name="news" value="ναι"><span><span class="el">Θέλω να μου στέλνετε νέα και προσφορές του okpublisher (το πολύ ένα email τον μήνα, διαγραφή όποτε θέλω).</span><span class="en">Send me okpublisher news and offers (at most one email a month, unsubscribe anytime).</span></span></label>
+    <p class="w note"><span class="el">Τα στοιχεία σας τα χρησιμοποιούμε μόνο για να σας απαντήσουμε. <a href="privacy.html">Πολιτική απορρήτου</a></span><span class="en">We use your details only to reply to you. <a href="privacy.html#en">Privacy policy</a></span></p>
+    <input type="hidden" name="source" id="f-src">
     <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <div class="w"><button class="btn v" type="submit"><span class="el">Αποστολή</span><span class="en">Send</span></button> <span id="msg" role="status"></span></div>
   </form>
@@ -280,7 +285,7 @@ footer a{color:#fff}
   <img src="img/mark.png" alt="" style="height:28px">
   <span>okpublisher · One monthly OK</span>
   <a href="mailto:okpublisher.gr@gmail.com">okpublisher.gr@gmail.com</a>
-  <a href="https://github.com/okpublisher/publisher/blob/main/PRIVACY.md"><span class="el">Πολιτική απορρήτου</span><span class="en">Privacy policy</span></a>
+  <a href="privacy.html"><span class="el">Πολιτική απορρήτου</span><span class="en">Privacy policy</span></a>
   <span>© 2026</span>
 </div></footer>
 
@@ -331,20 +336,29 @@ document.getElementById('qs').innerHTML = qs.map(([a, b, c, d]) => `<details><su
 const sel = document.getElementById('f-plan');
 const opts = [['', 'Δεν ξέρω ακόμα', 'Not sure yet']].concat(plans.map(p => [p[0], `${p[0]} · €${p[2]}`, `${p[1]} · €${p[2]}`]));
 const fillSel = l => { const v = sel.value; sel.innerHTML = opts.map(([v2, g, e]) => `<option value="${v2}">${l === 'en' ? e : g}</option>`).join(''); sel.value = v; };
-const setLang = l => {
+const setLang = (l, save) => {
   document.documentElement.dataset.l = l; document.documentElement.lang = l;
   document.getElementById('l-el').setAttribute('aria-pressed', l === 'el');
   document.getElementById('l-en').setAttribute('aria-pressed', l === 'en');
   fillSel(l);
-  try { localStorage.setItem('okp-lang', l); } catch (e) {}
+  if (save) { try { localStorage.setItem('okp-lang', l); } catch (e) {} }
 };
 let start = location.hash === '#en' ? 'en' : 'el';
 try { if (location.hash !== '#en' && localStorage.getItem('okp-lang') === 'en') start = 'en'; } catch (e) {}
 setLang(start);
-document.getElementById('l-el').addEventListener('click', () => setLang('el'));
-document.getElementById('l-en').addEventListener('click', () => setLang('en'));
+document.getElementById('l-el').addEventListener('click', () => setLang('el', true));
+document.getElementById('l-en').addEventListener('click', () => setLang('en', true));
 document.querySelectorAll('[data-plan]').forEach(a => a.addEventListener('click', () => { sel.value = a.dataset.plan; }));
 const f = document.getElementById('f'), msg = document.getElementById('msg');
+// Πηγή επαφής, χωρίς cookies και χωρίς αποθήκευση στον browser: utm_source / utm_medium / utm_campaign του συνδέσμου
+// ή ο ιστότοπος από τον οποίο ήρθε ο επισκέπτης (μία σελίδα: η διεύθυνση μένει ίδια σε όλη την επίσκεψη).
+const src = (() => {
+  const q = new URLSearchParams(location.search), u = ['utm_source', 'utm_medium', 'utm_campaign'].map(k => (q.get(k) || '').slice(0, 60)).filter(Boolean).join(' / ');
+  if (u) return u;
+  try { const r = document.referrer && new URL(document.referrer).hostname; if (r && r !== location.hostname) return 'από ' + r; } catch (e) {}
+  return 'απευθείας';
+})();
+document.getElementById('f-src').value = src;
 f.addEventListener('submit', async ev => {
   ev.preventDefault();
   const en = document.documentElement.dataset.l === 'en';
@@ -356,7 +370,7 @@ f.addEventListener('submit', async ev => {
   msg.textContent = en ? 'Sending…' : 'Αποστολή…';
   try {
     await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) });
-    f.reset(); fillSel(d.lang);
+    f.reset(); fillSel(d.lang); document.getElementById('f-src').value = src;
     msg.textContent = en ? 'Thank you! We will reply by email.' : 'Ευχαριστούμε! Θα σας απαντήσουμε με email.';
   } catch (e) { msg.textContent = en ? 'Could not send: please email okpublisher.gr@gmail.com.' : 'Δεν στάλθηκε: γράψτε μας στο okpublisher.gr@gmail.com.'; }
 });

@@ -5,6 +5,11 @@
  *   - γράφεται σε μια γραμμή του Sheet στο οποίο ανήκει το script (καρτέλα «Ενδιαφέροντα»),
  *   - στέλνεται ως email στον λογαριασμό που τρέχει το script (okpublisher.gr) — σε κανέναν άλλον.
  * Προστασία: κρυφό πεδίο (website) για bots, όρια μήκους, το πολύ 30 αιτήματα την ώρα.
+ * Στήλες Πηγή (utm_… του συνδέσμου ή ο ιστότοπος από τον οποίο ήρθε) και Νέα (ναι = συγκατάθεση για email με νέα/προσφορές,
+ * από το τετραγωνάκι της φόρμας· χωρίς «ναι» δεν στέλνουμε διαφημιστικά email).
+ *
+ * Νέα έκδοση του κώδικα (ίδιος σύνδεσμος /exec): επικόλληση → Ανάπτυξη → Διαχείριση αναπτύξεων → μολύβι →
+ *   Έκδοση: Νέα έκδοση → Ανάπτυξη. ΟΧΙ «Νέα ανάπτυξη» (θα έδινε νέο σύνδεσμο).
  *
  * Εγκατάσταση (μία φορά, στο okpublisher.gr@gmail.com):
  *   1. Νέο Google Sheet «okpublisher — ενδιαφέροντα» → Επεκτάσεις → Apps Script → επικόλληση αυτού του αρχείου.
@@ -14,9 +19,9 @@
  */
 const FORM_ = {
   SHEET: 'Ενδιαφέροντα',
-  HEAD: ['Χρόνος', 'Όνομα', 'Επιχείρηση', 'Email', 'Τηλέφωνο', 'Πακέτο', 'Instagram/Facebook', 'Μήνυμα', 'Γλώσσα', 'Κατάσταση'],
+  HEAD: ['Χρόνος', 'Όνομα', 'Επιχείρηση', 'Email', 'Τηλέφωνο', 'Πακέτο', 'Instagram/Facebook', 'Μήνυμα', 'Γλώσσα', 'Κατάσταση', 'Πηγή', 'Νέα'],
   MAX_PER_HOUR: 30,
-  LEN: { name: 120, business: 160, email: 160, phone: 40, plan: 40, social: 160, message: 3000, lang: 4 },
+  LEN: { name: 120, business: 160, email: 160, phone: 40, plan: 40, social: 160, message: 3000, lang: 4, source: 200, news: 4 },
 };
 
 function doPost(e) {
@@ -36,7 +41,8 @@ function doPost(e) {
     const sh = sheet_();
     // Τα κελιά γράφονται ως κείμενο (όχι τύποι): ό,τι αρχίζει με = + - @ παίρνει μπροστά απόστροφο.
     const safe = function (v) { return /^[=+\-@]/.test(v) ? "'" + v : v; };
-    sh.appendRow([new Date()].concat([r.name, r.business, r.email, r.phone, r.plan, r.social, r.message, r.lang].map(safe), ['νέο']));
+    const news = r.news === 'ναι' ? 'ναι' : 'όχι';
+    sh.appendRow([new Date()].concat([r.name, r.business, r.email, r.phone, r.plan, r.social, r.message, r.lang].map(safe), ['νέο', safe(r.source || '—'), news]));
   } finally { lock.releaseLock(); }
   const me = Session.getEffectiveUser().getEmail();
   if (me) {
@@ -44,7 +50,8 @@ function doPost(e) {
       to: me, replyTo: r.email, name: 'okpublisher.gr',
       subject: '[okpublisher.gr] Νέο ενδιαφέρον: ' + r.business + (r.plan ? ' (' + r.plan + ')' : ''),
       body: ['Όνομα: ' + r.name, 'Επιχείρηση: ' + r.business, 'Email: ' + r.email, 'Τηλέφωνο: ' + (r.phone || '—'),
-        'Πακέτο: ' + (r.plan || 'δεν ξέρει ακόμα'), 'Instagram/Facebook: ' + (r.social || '—'), 'Γλώσσα: ' + (r.lang || 'el'), '', r.message || '(χωρίς μήνυμα)',
+        'Πακέτο: ' + (r.plan || 'δεν ξέρει ακόμα'), 'Instagram/Facebook: ' + (r.social || '—'), 'Γλώσσα: ' + (r.lang || 'el'),
+        'Πηγή: ' + (r.source || '—'), 'Νέα/προσφορές με email: ' + (r.news === 'ναι' ? 'ναι (συγκατάθεση)' : 'όχι'), '', r.message || '(χωρίς μήνυμα)',
         '', 'Απάντηση: απλώς «Απάντηση» σε αυτό το email (πάει στον ενδιαφερόμενο).'].join('\n'),
     });
   }
@@ -60,6 +67,8 @@ function sheet_() {
     sh = ss.insertSheet(FORM_.SHEET);
     sh.getRange(1, 1, 1, FORM_.HEAD.length).setValues([FORM_.HEAD]).setFontWeight('bold');
     sh.setFrozenRows(1);
+  } else if (sh.getLastColumn() < FORM_.HEAD.length) {
+    sh.getRange(1, 1, 1, FORM_.HEAD.length).setValues([FORM_.HEAD]).setFontWeight('bold');   // νέες στήλες στο τέλος
   }
   return sh;
 }
@@ -67,6 +76,6 @@ function sheet_() {
 function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 
 function testForm() {
-  const res = doPost({ postData: { contents: JSON.stringify({ name: 'Δοκιμή', business: 'Δοκιμαστική επιχείρηση', email: 'test@example.com', plan: 'Μεσαίο', message: 'Δοκιμή φόρμας', lang: 'el' }) } });
+  const res = doPost({ postData: { contents: JSON.stringify({ name: 'Δοκιμή', business: 'Δοκιμαστική επιχείρηση', email: 'test@example.com', plan: 'Μεσαίο', message: 'Δοκιμή φόρμας', lang: 'el', source: 'δοκιμή', news: 'ναι' }) } });
   console.log(res.getContent());
 }
