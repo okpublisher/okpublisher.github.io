@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>okpublisher</title>
-<meta name="description" content="Ένα ΟΚ τον μήνα. Posts, reels και stories για την επιχείρησή σας, με μία έγκριση τον μήνα. One monthly OK: we create and publish your Instagram and Facebook.">
+<meta name="description" content="Ένα ΟΚ τον μήνα. Φτιάχνουμε και δημοσιεύουμε posts, reels και stories στο Instagram και στο Facebook της επιχείρησής σας, με μία έγκριση τον μήνα. Από €150 + ΦΠΑ, ο 1ος μήνας δωρεάν. One monthly OK: we create and publish your Instagram and Facebook.">
 <link rel="icon" href="img/favicon.png">
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
@@ -110,7 +110,35 @@ nav .links a:hover{color:var(--v)}
 .ben h3{font-size:20px}
 .ben p{color:var(--mut);margin-top:6px}
 @media(max-width:760px){.ben{grid-template-columns:1fr}}
+.hero .assure{margin-top:14px;font-size:14px;color:#ECE4FF}
+.cmp{background:var(--ink);color:#fff}
+.cmp .lede{color:#C9C3E6;margin-top:12px;max-width:62ch}
+.cg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:32px;align-items:stretch}
+.c{border-radius:22px;padding:24px;background:#22254A;display:flex;flex-direction:column;gap:12px}
+.c h3{font-size:20px}
+.c ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;color:#D9D4F2}
+.c li{padding-left:18px;position:relative}
+.c li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:#8B83B8}
+.c .fit{margin-top:auto;padding-top:12px;border-top:1px solid #3A3D66;font-size:15px}
+.c .fit b{display:block;font-size:13px;color:#C4B5FD;margin-bottom:2px}
+.c.ok{background:#fff;color:var(--ink);box-shadow:0 0 0 4px var(--y)}
+.c.ok ul{color:var(--mut)}
+.c.ok li::before{background:var(--v)}
+.c.ok .fit{border-top-color:var(--line)}
+.c.ok .fit b{color:var(--v)}
+.c .tag{align-self:flex-start;background:var(--y);color:var(--ink);font:800 13px Manrope,sans-serif;padding:4px 10px;border-radius:999px}
+.cmp .after{margin-top:22px;color:#C9C3E6;font-size:15px}
+@media(max-width:900px){.cg{grid-template-columns:1fr}}
 .plans{background:var(--lav)}
+.free{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:18px}
+.free b{background:var(--y);border-radius:999px;padding:8px 16px;font-size:16px}
+.free span{color:var(--mut)}
+.addon{margin-top:28px;background:#fff;border:2px dashed var(--v);border-radius:22px;padding:22px 24px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:center}
+.addon h3{font-size:20px}
+.addon p{color:var(--mut);margin-top:6px}
+.addon .lbl{font-size:13px;font-weight:700;color:var(--v);text-transform:uppercase;letter-spacing:.04em}
+@media(max-width:700px){.addon{grid-template-columns:1fr}}
+.excl{margin-top:10px;color:var(--mut);font-size:15px}
 .pl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:32px}
 .p{background:#fff;border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:12px;border:2px solid transparent}
 .p.mid{border-color:var(--v)}
@@ -160,7 +188,8 @@ footer a{color:#fff}
   <a class="logo" href="#top" aria-label="okpublisher"><img src="img/mark.png" alt=""><img src="img/word.png" alt="okpublisher"></a>
   <div class="links">
     <a href="#how"><span class="el">Πώς δουλεύει</span><span class="en">How it works</span></a>
-    <a href="#month"><span class="el">Ένας μήνας</span><span class="en">A month</span></a>
+    <a href="#gain"><span class="el">Τι κερδίζετε</span><span class="en">What you gain</span></a>
+    <a href="#compare"><span class="el">Σύγκριση</span><span class="en">Compare</span></a>
     <a href="#plans"><span class="el">Πακέτα</span><span class="en">Plans</span></a>
     <a href="#faq"><span class="el">Ερωτήσεις</span><span class="en">FAQ</span></a>
   </div>
@@ -172,7 +201,8 @@ footer a{color:#fff}
     <h1><span class="el">Ένα ΟΚ τον μήνα. Τα υπόλοιπα τα κάνουμε εμείς.</span><span class="en">One monthly OK. We do the rest.</span></h1>
     <div>
       <p class="lead"><span class="el">Ανεβάζετε φωτογραφίες και βίντεο από το κινητό. Εμείς φτιάχνουμε posts, reels και stories, σας στέλνουμε όλο τον μήνα σε ένα email για έγκριση και τα δημοσιεύουμε στο Instagram και στο Facebook, τις ώρες που σας βλέπει το κοινό σας.</span><span class="en">You upload photos and videos from your phone. We create posts, reels and stories, send you the whole month in one email for approval, and publish on Instagram and Facebook at the hours your audience is online.</span></p>
-      <div class="cta"><a class="btn y" href="#contact"><span class="el">Ζητήστε προσφορά</span><span class="en">Get a quote</span></a><a class="btn o" href="#how"><span class="el">Πώς δουλεύει</span><span class="en">How it works</span></a></div>
+      <div class="cta"><a class="btn y" href="#contact"><span class="el">Δοκιμάστε έναν μήνα δωρεάν</span><span class="en">Try a month free</span></a><a class="btn o" href="#how"><span class="el">Πώς δουλεύει</span><span class="en">How it works</span></a></div>
+      <p class="assure"><span class="el">Από €150 + ΦΠΑ τον μήνα · χωρίς δέσμευση · χωρίς κόστος σεταρίσματος</span><span class="en">From €150 + VAT a month · no commitment · no setup fee</span></p>
     </div>
   </div>
   <div class="stage">
@@ -240,29 +270,67 @@ footer a{color:#fff}
   </div>
 </div></section>
 
-<section class="band"><div class="in">
-  <p class="kick"><span class="el">Τι παίρνετε</span><span class="en">What you get</span></p>
+<section class="band" id="gain"><div class="in">
+  <p class="kick"><span class="el">Τι κερδίζετε</span><span class="en">What you gain</span></p>
   <h2><span class="el">Σελίδα ζωντανή και συνεπής, χωρίς να ασχολείστε.</span><span class="en">A page that stays alive and consistent, without your time.</span></h2>
-  <div class="ben" id="ben"></div>
+  <div class="ben">
+    <div><h3><span class="el">Κερδίζετε χρόνο</span><span class="en">You get your time back</span></h3><p><span class="el">Ένα email τον μήνα αντί για το καθημερινό «τι ανεβάζουμε σήμερα;». Το υλικό το τραβάτε όπως και τώρα, με το κινητό.</span><span class="en">One email a month instead of the daily “what do we post today?”. You keep shooting as you do now, on your phone.</span></p></div>
+    <div><h3><span class="el">Η σελίδα δεν σταματά</span><span class="en">Your page never goes quiet</span></h3><p><span class="el">Οι δημοσιεύσεις βγαίνουν στην ώρα τους, ακόμα και στις πιο γεμάτες εβδομάδες σας.</span><span class="en">Posts go out on schedule, even in your busiest weeks.</span></p></div>
+    <div><h3><span class="el">Μοιάζει με εσάς</span><span class="en">It looks like you</span></h3><p><span class="el">Τα χρώματα, το ύφος και οι κανόνες σας. Κάθε διόρθωσή σας γίνεται κανόνας για τους επόμενους μήνες.</span><span class="en">Your colours, your tone, your rules. Every correction you make becomes a rule for the months ahead.</span></p></div>
+    <div><h3><span class="el">Όταν το υλικό είναι λίγο</span><span class="en">When material is thin</span></h3><p><span class="el">Συμπληρώνουμε με γραφικά στα χρώματά σας: υπηρεσίες, συμβουλές, κριτικές, κάλεσμα για ραντεβού. Ποτέ άσχετες εικόνες.</span><span class="en">We fill in with graphics in your colours: services, tips, reviews, a call to book. Never unrelated images.</span></p></div>
+    <div><h3><span class="el">Τα δικά σας reels χωράνε</span><span class="en">Your own reels fit right in</span></h3><p><span class="el">Βάζετε τα έτοιμα reels σας σε έναν υποφάκελο. Δημοσιεύονται όπως είναι, χωρίς αλλαγή σε ήχο ή μοντάζ, μέσα στο ίδιο πρόγραμμα.</span><span class="en">Put your finished reels in a subfolder. They go out as they are, sound and edit untouched, inside the same schedule.</span></p></div>
+    <div><h3><span class="el">Τη σωστή ώρα</span><span class="en">At the right time</span></h3><p><span class="el">Το σύστημα βλέπει πότε είναι online οι ακόλουθοί σας και δημοσιεύει τότε. Αν προτιμάτε, ορίζετε εσείς τις ώρες.</span><span class="en">The system sees when your followers are online and posts then. If you prefer, you set the hours.</span></p></div>
+    <div><h3><span class="el">Ξέρετε τι έφερε</span><span class="en">You see what it brought</span></h3><p><span class="el">Μηνιαία αναφορά σε ξεχωριστό email: τι δημοσιεύτηκε, πόσους έφτασε, πόσοι πάτησαν «κλήση» ή «οδηγίες».</span><span class="en">A monthly report in a separate email: what went out, who it reached, how many tapped “call” or “directions”.</span></p></div>
+    <div><h3><span class="el">Ήσυχο κεφάλι</span><span class="en">Peace of mind</span></h3><p><span class="el">Το υλικό μένει στο δικό σας Drive. Πρόσωπα που δεν πρέπει να φαίνονται θολώνονται. Τίποτα δεν βγαίνει χωρίς το ΟΚ σας.</span><span class="en">Your material stays in your own Drive. Faces that should not be shown are blurred. Nothing goes out without your OK.</span></p></div>
+  </div>
+</div></section>
+
+<section class="band cmp" id="compare"><div class="in">
+  <p class="kick" style="color:#C4B5FD"><span class="el">Τρεις τρόποι</span><span class="en">Three ways</span></p>
+  <h2><span class="el">Κάθε λύση έχει τη θέση της. Δείτε ποια σας ταιριάζει.</span><span class="en">Each option has its place. See which one fits you.</span></h2>
+  <div class="cg">
+    <div class="c"><h3><span class="el">Μόνοι σας, με online εργαλεία</span><span class="en">On your own, with online tools</span></h3><ul><li><span class="el">Εσείς σχεδιάζετε, γράφετε και προγραμματίζετε, με τη βοήθεια του εργαλείου.</span><span class="en">You plan, write and schedule, with the tool’s help.</span></li><li><span class="el">Χαμηλή μηνιαία συνδρομή.</span><span class="en">A low monthly subscription.</span></li><li><span class="el">Θέλει τον δικό σας χρόνο κάθε εβδομάδα.</span><span class="en">It takes your own time every week.</span></li></ul><p class="fit"><b><span class="el">Ταιριάζει αν</span><span class="en">A good fit if</span></b><span class="el">σας αρέσει να το κάνετε εσείς και έχετε τον χρόνο.</span><span class="en">you enjoy doing it yourself and have the time.</span></p></div>
+    <div class="c"><h3><span class="el">Freelancer ή γραφείο</span><span class="en">Freelancer or agency</span></h3><ul><li><span class="el">Άνθρωποι με εμπειρία δουλεύουν για εσάς.</span><span class="en">Experienced people work for you.</span></li><li><span class="el">Συχνά μαζί με στρατηγική, διαφημίσεις και απαντήσεις σε μηνύματα.</span><span class="en">Often with strategy, ads and replies to messages included.</span></li><li><span class="el">Κόστος ανάλογο με όσα περιλαμβάνει.</span><span class="en">Priced in line with everything included.</span></li></ul><p class="fit"><b><span class="el">Ταιριάζει αν</span><span class="en">A good fit if</span></b><span class="el">θέλετε ολοκληρωμένο marketing ή διαφημίσεις.</span><span class="en">you want full marketing or ad campaigns.</span></p></div>
+    <div class="c ok"><span class="tag">okpublisher</span><h3><span class="el">Έτοιμο πρόγραμμα, ένα ΟΚ τον μήνα</span><span class="en">A ready schedule, one OK a month</span></h3><ul><li><span class="el">Εμείς φτιάχνουμε και δημοσιεύουμε, με το δικό σας υλικό.</span><span class="en">We create and publish, with your own material.</span></li><li><span class="el">Σταθερή τιμή, από €150 + ΦΠΑ τον μήνα.</span><span class="en">A fixed price, from €150 + VAT a month.</span></li><li><span class="el">Από εσάς: λίγα λεπτά τον μήνα.</span><span class="en">From you: a few minutes a month.</span></li></ul><p class="fit"><b><span class="el">Ταιριάζει αν</span><span class="en">A good fit if</span></b><span class="el">θέλετε σελίδα ζωντανή και συνεπή, χωρίς να ασχολείστε.</span><span class="en">you want a live, consistent page without spending your time on it.</span></p></div>
+  </div>
+  <p class="after"><span class="el">Και αν αργότερα θελήσετε διαφημίσεις, το okpublisher συνεχίζει να κρατά τη σελίδα σας ζωντανή, δίπλα σε όποιον τις τρέχει.</span><span class="en">And if you later want ads, okpublisher keeps your page alive alongside whoever runs them.</span></p>
 </div></section>
 
 <section class="band plans" id="plans"><div class="in">
   <p class="kick"><span class="el">Πακέτα</span><span class="en">Plans</span></p>
   <h2><span class="el">Μία τιμή τον μήνα. Διαλέγετε πόσο συχνά.</span><span class="en">One monthly price. You choose how often.</span></h2>
-  <div class="pl" id="pl"></div>
-  <ul class="all" id="all"></ul>
-  <p class="fine"><span class="el">Reel ή carousel μετράει ως 1 post. Το πολύ 1 post και 1 story τη μέρα. Ο πρώτος μήνας είναι μήνας γνωριμίας, με περισσότερες διορθώσεις μέχρι να μάθουμε το ύφος σας.</span><span class="en">A reel or carousel counts as 1 post. At most 1 post and 1 story a day. The first month is a getting-to-know-you month, with more corrections until we learn your style.</span></p>
+  <div class="free"><b><span class="el">Ο 1ος μήνας δωρεάν</span><span class="en">First month free</span></b><span><span class="el">Χωρίς δέσμευση και χωρίς κόστος σεταρίσματος. Σταματάτε όποτε θέλετε, με ένα email.</span><span class="en">No commitment and no setup fee. Stop whenever you like, with one email.</span></span></div>
+  <div class="pl">
+    <div class="p"><h3><span class="el">Βασικό</span><span class="en">Basic</span></h3><div class="price">€150 <small><span class="el">+ ΦΠΑ / μήνα</span><span class="en">+ VAT / month</span></small></div><div class="rate"><div><b>2</b><span><span class="el">posts την εβδομάδα</span><span class="en">posts a week</span></span></div><div><b>2</b><span><span class="el">stories την εβδομάδα</span><span class="en">stories a week</span></span></div></div><p class="who"><span class="el">Για να μένει η σελίδα ζωντανή, χωρίς να ασχολείστε.</span><span class="en">Keeps your page alive, without your time.</span> <span class="el">Περίπου 9 + 9 τον μήνα.</span><span class="en">About 9 + 9 a month.</span></p><a class="btn y" href="#contact" data-plan="Βασικό"><span class="el">Το θέλω</span><span class="en">I want this</span></a></div>
+    <div class="p mid"><h3><span class="el">Μεσαίο</span><span class="en">Standard</span></h3><div class="price">€200 <small><span class="el">+ ΦΠΑ / μήνα</span><span class="en">+ VAT / month</span></small></div><div class="rate"><div><b>4</b><span><span class="el">posts την εβδομάδα</span><span class="en">posts a week</span></span></div><div><b>4</b><span><span class="el">stories την εβδομάδα</span><span class="en">stories a week</span></span></div></div><p class="who"><span class="el">Σταθερή παρουσία κάθε δεύτερη μέρα.</span><span class="en">A steady presence every other day.</span> <span class="el">Περίπου 17 + 17 τον μήνα.</span><span class="en">About 17 + 17 a month.</span></p><a class="btn v" href="#contact" data-plan="Μεσαίο"><span class="el">Το θέλω</span><span class="en">I want this</span></a></div>
+    <div class="p"><h3><span class="el">Καθημερινό</span><span class="en">Daily</span></h3><div class="price">€300 <small><span class="el">+ ΦΠΑ / μήνα</span><span class="en">+ VAT / month</span></small></div><div class="rate"><div><b>7</b><span><span class="el">posts την εβδομάδα</span><span class="en">posts a week</span></span></div><div><b>7</b><span><span class="el">stories την εβδομάδα</span><span class="en">stories a week</span></span></div></div><p class="who"><span class="el">Κάθε μέρα post και story. Θέλει υλικό κάθε μέρα.</span><span class="en">A post and a story every day. Needs material every day.</span> <span class="el">Περίπου 30 + 30 τον μήνα.</span><span class="en">About 30 + 30 a month.</span></p><a class="btn y" href="#contact" data-plan="Καθημερινό"><span class="el">Το θέλω</span><span class="en">I want this</span></a></div>
+  </div>
+  <ul class="all"><li><span class="el">Ένα email έγκρισης τον μήνα</span><span class="en">One approval email a month</span></li><li><span class="el">Μηνιαία αναφορά σε ξεχωριστό email</span><span class="en">Monthly report in a separate email</span></li><li><span class="el">Αυτόματες ώρες ή οι δικές σας</span><span class="en">Automatic timing, or your own</span></li><li><span class="el">Posts, carousels, reels και stories σε Instagram και Facebook</span><span class="en">Posts, carousels, reels and stories on Instagram and Facebook</span></li><li><span class="el">Γραφικά με τα χρώματά σας</span><span class="en">Graphics in your colours</span></li><li><span class="el">Τα δικά σας έτοιμα reels, όπως είναι</span><span class="en">Your own finished reels, as they are</span></li></ul>
+  <p class="fine"><span class="el">Reel ή carousel μετράει ως 1 post. Το πολύ 1 post και 1 story τη μέρα. Ο πρώτος μήνας είναι μήνας γνωριμίας, με περισσότερες διορθώσεις μέχρι να μάθουμε το ύφος σας. Δεχόμαστε έως 3 νέες επιχειρήσεις τον μήνα, για να έχει η καθεμία τον χρόνο που χρειάζεται.</span><span class="en">A reel or carousel counts as 1 post. At most 1 post and 1 story a day. The first month is a getting-to-know-you month, with more corrections until we learn your style. We take up to 3 new businesses a month, so each gets the time it needs.</span></p>
+  <p class="excl"><span class="el">Δεν περιλαμβάνονται: διαφημίσεις, απαντήσεις σε μηνύματα και σχόλια, φωτογράφιση και γύρισμα βίντεο.</span><span class="en">Not included: ads, replies to messages and comments, photo and video shoots.</span></p>
+  <div class="addon"><div><p class="lbl"><span class="el">Πρόσθετο</span><span class="en">Add-on</span></p><h3><span class="el">Γύρισμα και μοντάζ reels</span><span class="en">Reel filming and editing</span></h3><p><span class="el">Ο συνεργάτης μας γυρίζει και μοντάρει reels για εσάς, και μπαίνουν στο πρόγραμμά σας όπως όλα τα άλλα. Την ιδέα, τη σκαλέτα και το σενάριο τα φέρνετε εσείς. Τιμή με προσφορά· ρωτήστε μας αν καλύπτουμε την περιοχή σας.</span><span class="en">Our partner films and edits reels for you, and they go into your schedule like everything else. You bring the idea, outline and script. Priced on request; ask whether we cover your area.</span></p></div><a class="btn v" href="#contact" data-addon="1"><span class="el">Ρωτήστε μας</span><span class="en">Ask us</span></a></div>
 </div></section>
 
 <section class="band" id="faq"><div class="in faq">
   <div><p class="kick"><span class="el">Ερωτήσεις</span><span class="en">Questions</span></p><h2><span class="el">Ό,τι ρωτάνε συνήθως</span><span class="en">What people usually ask</span></h2></div>
-  <div id="qs"></div>
+  <div>
+    <details><summary><span class="el">Τι χρειάζεστε από εμάς;</span><span class="en">What do you need from us?</span></summary><p><span class="el">Σελίδα Facebook και επαγγελματικό λογαριασμό Instagram συνδεδεμένο με αυτήν, πρόσβαση για δημοσίευση και έναν φάκελο Google Drive για το υλικό. Το σετάρισμα το κάνουμε μαζί, μία φορά.</span><span class="en">A Facebook Page and a professional Instagram account linked to it, publishing access and a Google Drive folder for your material. We do the setup together, once.</span></p></details>
+    <details><summary><span class="el">Πώς λειτουργεί ο δωρεάν μήνας;</span><span class="en">How does the free month work?</span></summary><p><span class="el">Σετάρουμε μαζί σελίδα, φάκελο και ύφος, και ξεκινάμε. Στο τέλος του μήνα παίρνετε την αναφορά και αποφασίζετε αν συνεχίζουμε. Αν όχι, αρκεί ένα email· δεν χρωστάτε τίποτα.</span><span class="en">We set up your page, folder and style together, and start. At the end of the month you get the report and decide whether we continue. If not, one email is enough; you owe nothing.</span></p></details>
+    <details><summary><span class="el">Πότε ξεκινάμε;</span><span class="en">When do we start?</span></summary><p><span class="el">Την 1η του επόμενου μήνα, αν το σετάρισμα ολοκληρωθεί έως τις 15. Το πρόγραμμα κάθε μήνα το ετοιμάζουμε στις 20 του προηγούμενου.</span><span class="en">On the 1st of next month, if setup is complete by the 15th. We prepare each month’s schedule on the 20th of the month before.</span></p></details>
+    <details><summary><span class="el">Δεν έχω πολλές φωτογραφίες.</span><span class="en">I do not have many photos.</span></summary><p><span class="el">Δεν πειράζει: συμπληρώνουμε με γραφικά στα χρώματά σας. Όσο περισσότερο υλικό στέλνετε, τόσο πιο ζωντανή η σελίδα.</span><span class="en">That is fine: we fill in with graphics in your colours. The more you send, the livelier the page.</span></p></details>
+    <details><summary><span class="el">Έχω δικά μου reels. Τι γίνεται;</span><span class="en">I have my own reels. What happens?</span></summary><p><span class="el">Τα βάζετε στον υποφάκελο «REELS ΕΤΟΙΜΑ» του φακέλου σας. Δημοσιεύονται όπως είναι, χωρίς αλλαγή σε ήχο ή μοντάζ, στις θέσεις των reels του προγράμματος, και περνούν από την ίδια μηνιαία έγκριση. Για συγκεκριμένη μέρα, βάλτε την ημερομηνία στην αρχή του ονόματος (π.χ. «2027-01-15 …»).</span><span class="en">Put them in the “REELS ΕΤΟΙΜΑ” subfolder of your folder. They go out as they are, sound and edit untouched, in the schedule’s reel slots, and go through the same monthly approval. For a specific day, start the file name with the date (e.g. “2027-01-15 …”).</span></p></details>
+    <details><summary><span class="el">Τι γίνεται αν δεν μου αρέσει κάτι;</span><span class="en">What if I do not like something?</span></summary><p><span class="el">Γράφετε τον αριθμό και την αλλαγή, π.χ. «#7: άλλη φωτογραφία». Σας στέλνουμε νέα έκδοση στο ίδιο email. Τίποτα δεν βγαίνει πριν το ΟΚ σας.</span><span class="en">Write the number and the change, e.g. "#7: different photo". We send a new version in the same email. Nothing goes out before your OK.</span></p></details>
+    <details><summary><span class="el">Γιατί όχι ένα εργαλείο AI, μόνος μου;</span><span class="en">Why not use an AI tool myself?</span></summary><p><span class="el">Μπορείτε, και για πολλούς είναι καλή λύση. Η διαφορά είναι ποιος δουλεύει: με ένα εργαλείο φτιάχνετε και προγραμματίζετε εσείς κάθε εβδομάδα· με το okpublisher το κάνουμε εμείς και εσείς εγκρίνετε μία φορά τον μήνα.</span><span class="en">You can, and for many it is a good option. The difference is who does the work: with a tool you create and schedule every week; with okpublisher we do it and you approve once a month.</span></p></details>
+    <details><summary><span class="el">Κάνετε διαφημίσεις ή απαντάτε σε μηνύματα;</span><span class="en">Do you run ads or reply to messages?</span></summary><p><span class="el">Όχι. Κρατάμε τη σελίδα σας ζωντανή με δημοσιεύσεις. Τα μηνύματα και τα σχόλια μένουν σε εσάς, που ξέρετε καλύτερα τους πελάτες σας. Αν θέλετε διαφημίσεις, μπορούν να τρέχουν παράλληλα, από όποιον επιλέξετε.</span><span class="en">No. We keep your page alive with posts. Messages and comments stay with you, since you know your customers best. If you want ads, they can run alongside, by whoever you choose.</span></p></details>
+    <details><summary><span class="el">Θα αυξηθούν οι ακόλουθοι και οι πελάτες;</span><span class="en">Will followers and customers grow?</span></summary><p><span class="el">Δεν το υποσχόμαστε. Μια σελίδα που ανεβάζει σταθερά, στις σωστές ώρες, βοηθά να σας βρίσκουν και να σας εμπιστεύονται. Στη μηνιαία αναφορά βλέπετε τι έφερε.</span><span class="en">We do not promise it. A page that posts steadily, at the right hours, helps people find and trust you. The monthly report shows what it brought.</span></p></details>
+    <details><summary><span class="el">Ποιος βλέπει το υλικό μου;</span><span class="en">Who sees my material?</span></summary><p><span class="el">Το υλικό μένει στον δικό σας φάκελο Drive. Δημοσιεύεται μόνο ό,τι εγκρίνετε, και πρόσωπα που δεν πρέπει να φαίνονται θολώνονται.</span><span class="en">Your material stays in your own Drive folder. Only what you approve is published, and faces that should not be shown are blurred.</span></p></details>
+  </div>
 </div></section>
 
 <section class="band contact" id="contact"><div class="in grid">
   <div>
     <h2><span class="el">Πείτε μας για την επιχείρησή σας</span><span class="en">Tell us about your business</span></h2>
-    <p style="margin-top:14px;color:#ECE4FF"><span class="el">Θα σας απαντήσουμε με email, με πρόταση πακέτου και τι χρειάζεται για να ξεκινήσουμε.</span><span class="en">We will reply by email with a suggested plan and what we need to get started.</span></p>
+    <p style="margin-top:14px;color:#ECE4FF"><span class="el">Θα σας απαντήσουμε με email: ποιο πακέτο σας ταιριάζει και τι χρειάζεται για να ξεκινήσει ο δωρεάν μήνας σας.</span><span class="en">We will reply by email: which plan fits you and what we need to start your free month.</span></p>
     <p class="mailto"><span class="el">Ή γράψτε μας:</span><span class="en">Or write to us:</span> <a href="mailto:okpublisher.gr@gmail.com">okpublisher.gr@gmail.com</a></p>
   </div>
   <form id="f" novalidate>
@@ -270,9 +338,10 @@ footer a{color:#fff}
     <div><label for="f-biz"><span class="el">Επιχείρηση</span><span class="en">Business</span></label><input id="f-biz" name="business" required autocomplete="organization"></div>
     <div><label for="f-email">Email</label><input id="f-email" name="email" type="email" required autocomplete="email"></div>
     <div><label for="f-phone"><span class="el">Τηλέφωνο (προαιρετικό)</span><span class="en">Phone (optional)</span></label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div>
-    <div><label for="f-plan"><span class="el">Πακέτο</span><span class="en">Plan</span></label><select id="f-plan" name="plan"></select></div>
+    <div><label for="f-plan"><span class="el">Πακέτο</span><span class="en">Plan</span></label><select id="f-plan" name="plan"><option value="">Δεν ξέρω ακόμα</option><option value="Βασικό">Βασικό · €150</option><option value="Μεσαίο">Μεσαίο · €200</option><option value="Καθημερινό">Καθημερινό · €300</option></select></div>
     <div><label for="f-ig"><span class="el">Instagram ή Facebook (προαιρετικό)</span><span class="en">Instagram or Facebook (optional)</span></label><input id="f-ig" name="social" placeholder="@"></div>
     <div class="w"><label for="f-msg"><span class="el">Τι κάνει η επιχείρησή σας;</span><span class="en">What does your business do?</span></label><textarea id="f-msg" name="message"></textarea></div>
+    <label class="w chk"><input type="checkbox" name="addon_reels" value="ναι" id="f-addon"><span><span class="el">Με ενδιαφέρει και το γύρισμα/μοντάζ reels (πρόσθετο).</span><span class="en">I am also interested in reel filming/editing (add-on).</span></span></label>
     <label class="w chk"><input type="checkbox" name="news" value="ναι"><span><span class="el">Θέλω να μου στέλνετε νέα και προσφορές του okpublisher (το πολύ ένα email τον μήνα, διαγραφή όποτε θέλω).</span><span class="en">Send me okpublisher news and offers (at most one email a month, unsubscribe anytime).</span></span></label>
     <p class="w note"><span class="el">Τα στοιχεία σας τα χρησιμοποιούμε μόνο για να σας απαντήσουμε. <a href="privacy.html">Πολιτική απορρήτου</a></span><span class="en">We use your details only to reply to you. <a href="privacy.html#en">Privacy policy</a></span></p>
     <input type="hidden" name="source" id="f-src">
@@ -308,31 +377,8 @@ document.getElementById('feed').innerHTML = [['p1', 'Το πρωινό μας', 
   .map(([f, g, e]) => `<figure><img src="img/${f}.jpg" alt="${g}" loading="lazy"><figcaption>${T(g, e)}</figcaption></figure>`).join('');
 const hrs = [['07:00', 52], ['08:00', 100], ['09:00', 74], ['13:00', 58], ['19:00', 66], ['21:00', 81]];
 document.getElementById('hrs').innerHTML = hrs.map(([t, v]) => `<span>${t}</span><div class="${v === 100 ? 'top' : ''}"><i style="width:${v}%"></i></div><span>${v === 100 ? T('η καλύτερη', 'best') : ''}</span>`).join('');
-const ben = [
-  ['Δουλεύουμε με ό,τι βγάζει το κινητό', 'We work with whatever your phone shoots', 'Και με βίντεο: κόψιμο, reels με μουσική χωρίς πνευματικά δικαιώματα, εξώφυλλα. Δεν σας ζητάμε επαγγελματικές φωτογραφίες.', 'Video too: trimming, reels with royalty-free music, covers. No professional photos needed.'],
-  ['Γραφικά με τα χρώματά σας', 'Graphics in your colours', 'Όταν το υλικό είναι λίγο: υπηρεσίες, συμβουλές, κριτικές, κάλεσμα για ραντεβού. Ποτέ «γέμισμα» με άσχετες εικόνες.', 'When material is thin: services, tips, reviews, a call to book. Never filler with unrelated images.'],
-  ['Αυτόματες ώρες ή οι δικές σας', 'Automatic timing, or yours', 'Το σύστημα βλέπει πότε είναι online οι ακόλουθοί σας και δημοσιεύει τότε. Αν προτιμάτε, ορίζετε εσείς τις ώρες.', 'The system sees when your followers are online and posts then. If you prefer, you set the hours.'],
-  ['Μηνιαία αναφορά', 'Monthly report', 'Σε ξεχωριστό email: τι δημοσιεύτηκε, πώς πήγε, πότε σας βλέπουν, τι μάθαμε από εσάς.', 'In a separate email: what went out, how it did, when people see you, what we learned from you.'],
-  ['Ιδιωτικότητα πρώτα', 'Privacy first', 'Πρόσωπα που δεν πρέπει να φαίνονται θολώνονται. Το υλικό μένει στο δικό σας Drive. Τίποτα δεν δημοσιεύεται χωρίς το ΟΚ σας.', 'Faces that should not be shown are blurred. Your material stays in your own Drive. Nothing goes out without your OK.'],
-  ['Χωρίς πώληση διαφήμισης', 'No ad upselling', 'Δεν σας υποσχόμαστε «viral». Σας υποσχόμαστε σελίδα ζωντανή και συνεπή, χρόνο που κερδίζετε, και επαφές που μετριούνται.', 'We do not promise "viral". We promise a page that stays alive and consistent, time you get back, and contacts you can count.'],
-];
-document.getElementById('ben').innerHTML = ben.map(([a, b, c, d]) => `<div><h3>${T(a, b)}</h3><p>${T(c, d)}</p></div>`).join('');
-const plans = [
-  ['Βασικό', 'Basic', 100, 2, 9, 'Για να μένει η σελίδα ζωντανή, χωρίς να ασχολείστε.', 'Keeps your page alive, without your time.'],
-  ['Μεσαίο', 'Standard', 150, 4, 17, 'Σταθερή παρουσία κάθε δεύτερη μέρα.', 'A steady presence every other day.'],
-  ['Καθημερινό', 'Daily', 250, 7, 30, 'Κάθε μέρα post και story. Θέλει υλικό κάθε μέρα.', 'A post and a story every day. Needs material every day.'],
-];
-document.getElementById('pl').innerHTML = plans.map(([g, e, p, w, m, dg, de], i) => `<div class="p${i === 1 ? ' mid' : ''}"><h3>${T(g, e)}</h3><div class="price">€${p} <small>${T('+ ΦΠΑ / μήνα', '+ VAT / month')}</small></div><div class="rate"><div><b>${w}</b><span>${T('posts την εβδομάδα', 'posts a week')}</span></div><div><b>${w}</b><span>${T('stories την εβδομάδα', 'stories a week')}</span></div></div><p class="who">${T(dg, de)} ${T(`Περίπου ${m} + ${m} τον μήνα.`, `About ${m} + ${m} a month.`)}</p><a class="btn ${i === 1 ? 'v' : 'y'}" href="#contact" data-plan="${g}">${T('Το θέλω', 'I want this')}</a></div>`).join('');
-const all = [['Ένα email έγκρισης τον μήνα', 'One approval email a month'], ['Μηνιαία αναφορά σε ξεχωριστό email', 'Monthly report in a separate email'], ['Αυτόματες ώρες ή οι δικές σας', 'Automatic timing, or your own'], ['Posts, carousels, reels και stories', 'Posts, carousels, reels and stories'], ['Γραφικά με τα χρώματά σας', 'Graphics in your colours'], ['Instagram και Facebook', 'Instagram and Facebook']];
-document.getElementById('all').innerHTML = all.map(([g, e]) => `<li>${T(g, e)}</li>`).join('');
-const qs = [
-  ['Τι χρειάζεστε από εμάς;', 'What do you need from us?', 'Σελίδα Facebook και επαγγελματικό λογαριασμό Instagram συνδεδεμένο με αυτήν, πρόσβαση για δημοσίευση και έναν φάκελο Google Drive για το υλικό. Το σετάρισμα το κάνουμε μαζί, μία φορά.', 'A Facebook Page and a professional Instagram account linked to it, publishing access and a Google Drive folder for your material. We do the setup together, once.'],
-  ['Δεν έχω πολλές φωτογραφίες.', 'I do not have many photos.', 'Δεν πειράζει: συμπληρώνουμε με γραφικά στα χρώματά σας. Όσο περισσότερο υλικό στέλνετε, τόσο πιο ζωντανή η σελίδα.', 'That is fine: we fill in with graphics in your colours. The more you send, the livelier the page.'],
-  ['Τι γίνεται αν δεν μου αρέσει κάτι;', 'What if I do not like something?', 'Γράφετε τον αριθμό και την αλλαγή, π.χ. «#7: άλλη φωτογραφία». Σας στέλνουμε νέα έκδοση στο ίδιο email. Τίποτα δεν βγαίνει πριν το ΟΚ σας.', 'Write the number and the change, e.g. "#7: different photo". We send a new version in the same email. Nothing goes out before your OK.'],
-  ['Θα αυξηθούν οι ακόλουθοι και οι πελάτες;', 'Will followers and customers grow?', 'Δεν το υποσχόμαστε. Μια σελίδα που ανεβάζει σταθερά, στις σωστές ώρες, βοηθά να σας βρίσκουν και να σας εμπιστεύονται. Στη μηνιαία αναφορά βλέπετε τι έφερε.', 'We do not promise it. A page that posts steadily, at the right hours, helps people find and trust you. The monthly report shows what it brought.'],
-  ['Ποιος βλέπει το υλικό μου;', 'Who sees my material?', 'Το υλικό μένει στον δικό σας φάκελο Drive. Δημοσιεύεται μόνο ό,τι εγκρίνετε, και πρόσωπα που δεν πρέπει να φαίνονται θολώνονται.', 'Your material stays in your own Drive folder. Only what you approve is published, and faces that should not be shown are blurred.'],
-];
-document.getElementById('qs').innerHTML = qs.map(([a, b, c, d]) => `<details><summary>${T(a, b)}</summary><p>${T(c, d)}</p></details>`).join('');
+// Τα πακέτα/τιμές είναι γραμμένα στο HTML (και στη λίστα της φόρμας)· εδώ μόνο οι ετικέτες της λίστας για τα αγγλικά.
+const plans = [['Βασικό', 'Basic', 150], ['Μεσαίο', 'Standard', 200], ['Καθημερινό', 'Daily', 300]];
 const sel = document.getElementById('f-plan');
 const opts = [['', 'Δεν ξέρω ακόμα', 'Not sure yet']].concat(plans.map(p => [p[0], `${p[0]} · €${p[2]}`, `${p[1]} · €${p[2]}`]));
 const fillSel = l => { const v = sel.value; sel.innerHTML = opts.map(([v2, g, e]) => `<option value="${v2}">${l === 'en' ? e : g}</option>`).join(''); sel.value = v; };
@@ -349,6 +395,7 @@ setLang(start);
 document.getElementById('l-el').addEventListener('click', () => setLang('el', true));
 document.getElementById('l-en').addEventListener('click', () => setLang('en', true));
 document.querySelectorAll('[data-plan]').forEach(a => a.addEventListener('click', () => { sel.value = a.dataset.plan; }));
+document.querySelectorAll('[data-addon]').forEach(a => a.addEventListener('click', () => { document.getElementById('f-addon').checked = true; }));
 const f = document.getElementById('f'), msg = document.getElementById('msg');
 // Πηγή επαφής, χωρίς cookies και χωρίς αποθήκευση στον browser: utm_source / utm_medium / utm_campaign του συνδέσμου
 // ή ο ιστότοπος από τον οποίο ήρθε ο επισκέπτης (μία σελίδα: η διεύθυνση μένει ίδια σε όλη την επίσκεψη).
@@ -366,6 +413,7 @@ f.addEventListener('submit', async ev => {
   if (!d.name || !d.business || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { msg.textContent = en ? 'Please fill in name, business and a valid email.' : 'Συμπληρώστε όνομα, επιχείρηση και σωστό email.'; return; }
   if (d.website) return;
   d.lang = en ? 'en' : 'el';
+  if (d.addon_reels) { d.message = '[Πρόσθετο: γύρισμα/μοντάζ reels] ' + (d.message || ''); delete d.addon_reels; }
   if (!FORM_URL) { msg.textContent = en ? 'The form is not connected yet: please email okpublisher.gr@gmail.com.' : 'Η φόρμα δεν έχει συνδεθεί ακόμα: γράψτε μας στο okpublisher.gr@gmail.com.'; return; }
   msg.textContent = en ? 'Sending…' : 'Αποστολή…';
   try {
