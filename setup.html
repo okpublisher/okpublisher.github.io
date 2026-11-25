@@ -46,6 +46,10 @@ legend{font-weight:600;font-size:14px;margin-bottom:6px}
 button{font:700 17px Manrope,sans-serif;background:var(--v);color:#fff;border:0;border-radius:999px;padding:14px 28px;cursor:pointer}
 #msg{font-weight:600;margin-left:10px}
 .fine{font-size:14px}
+.bill{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.bill .w{grid-column:1/-1}
+@media(max-width:600px){.bill{grid-template-columns:1fr}}
+legend small{font-weight:500;color:var(--mut)}
 </style>
 </head>
 <body>
@@ -58,7 +62,7 @@ button{font:700 17px Manrope,sans-serif;background:var(--v);color:#fff;border:0;
 
 <h2>Τα βήματα</h2>
 <ol class="steps">
-  <li><b class="n">1</b><div><h3>Στείλτε μας τα στοιχεία σας</h3><p>Με τη φόρμα πιο κάτω: πακέτο, email για τις εγκρίσεις, τι κάνει η επιχείρηση και τι δεν θέλετε να γράφουμε.</p></div></li>
+  <li><b class="n">1</b><div><h3>Στείλτε μας τα στοιχεία σας</h3><p>Με τη φόρμα πιο κάτω: πακέτο, email για τις εγκρίσεις, τι κάνει η επιχείρηση, τι δεν θέλετε να γράφουμε και τα στοιχεία τιμολόγησης.</p></div></li>
   <li><b class="n">2</b><div><h3>Δώστε μας πρόσβαση στη σελίδα σας</h3>
     <p>Χρειαζόμαστε τη σελίδα Facebook και το Instagram σας, χωρίς κωδικούς. Τα δίνετε στον επιχειρηματικό λογαριασμό μας στη Meta, και μπορείτε να τα πάρετε πίσω όποτε θέλετε.</p>
     <ol class="sub">
@@ -103,6 +107,14 @@ button{font:700 17px Manrope,sans-serif;background:var(--v);color:#fff;border:0;
   <fieldset class="w"><legend>Λογότυπο και χρώματα</legend>
     <label class="opt"><input type="checkbox" name="logo" value="ναι"> Θα ανεβάσω το λογότυπο (και οδηγίες brand, αν έχω) στον φάκελο του Drive</label>
   </fieldset>
+  <fieldset class="w"><legend>Στοιχεία τιμολόγησης <small>(για το παραστατικό κάθε μήνα)</small></legend>
+    <div class="bill">
+      <div class="w"><label for="s-bname">Επωνυμία</label><input id="s-bname" name="bill_name" required autocomplete="organization"></div>
+      <div><label for="s-afm">ΑΦΜ</label><input id="s-afm" name="bill_afm" required inputmode="numeric" maxlength="20" placeholder="9 ψηφία"></div>
+      <div><label for="s-doy">ΔΟΥ</label><input id="s-doy" name="bill_doy" required></div>
+      <div class="w"><label for="s-baddr">Διεύθυνση έδρας <small>(οδός, αριθμός, ΤΚ, πόλη)</small></label><input id="s-baddr" name="bill_address" required autocomplete="street-address"></div>
+    </div>
+  </fieldset>
   <div class="w"><label for="s-msg">Κάτι άλλο που πρέπει να ξέρουμε; <small>(προαιρετικό)</small></label><textarea id="s-msg" name="message"></textarea></div>
   <fieldset class="w"><legend>Όροι</legend>
     <label class="opt"><input type="checkbox" name="terms" value="v3-2026-11-25" required> <span>Αποδέχομαι τους <a href="terms.html" target="_blank" rel="noopener">Όρους υπηρεσίας και τη Σύμβαση επεξεργασίας δεδομένων</a> (έκδοση 3, 25/11/2026). Ισχύουν και για τον δωρεάν μήνα.</span></label>
@@ -116,10 +128,16 @@ button{font:700 17px Manrope,sans-serif;background:var(--v);color:#fff;border:0;
 {
 const FORM_URL = 'https://script.google.com/macros/s/AKfycbzgDYs8OVVCYGqSMgI4MCoZuALfNdv_PgxSuFqnwWF9dD0SBWP2LhTLQF3a0EeIW4BuMg/exec';
 const f = document.getElementById('f'), msg = document.getElementById('msg');
+// Ελληνικός ΑΦΜ: 9 ψηφία, το τελευταίο είναι ψηφίο ελέγχου.
+const afmOk = a => { if (!/^\d{9}$/.test(a) || a === '000000000') return false; let s = 0; for (let i = 0; i < 8; i++) s += +a[i] * 2 ** (8 - i); return (s % 11) % 10 === +a[8]; };
 f.addEventListener('submit', async ev => {
   ev.preventDefault();
   const d = Object.fromEntries(new FormData(f).entries());
   if (!d.business || !d.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email) || !d.about) { msg.textContent = 'Συμπληρώστε επιχείρηση, υπεύθυνο, σωστό email και τι κάνει η επιχείρηση.'; return; }
+  const afm = String(d.bill_afm || '').replace(/[\s.\-]/g, '').replace(/^(EL|GR)/i, '');
+  if (!d.bill_name || !d.bill_doy || !d.bill_address || !afm) { msg.textContent = 'Συμπληρώστε τα στοιχεία τιμολόγησης: επωνυμία, ΑΦΜ, ΔΟΥ και διεύθυνση.'; return; }
+  if (!afmOk(afm)) { msg.textContent = 'Ο ΑΦΜ δεν φαίνεται σωστός (9 ψηφία). Ελέγξτε τον, παρακαλούμε.'; return; }
+  d.bill_afm = afm;
   if (!d.terms) { msg.textContent = 'Για να ξεκινήσουμε, χρειάζεται να αποδεχτείτε τους όρους (τετραγωνάκι «Όροι»).'; return; }
   if (d.website) return;
   d.type = 'setup'; d.lang = 'el';
