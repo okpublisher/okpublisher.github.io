@@ -104,6 +104,9 @@ button{font:700 17px Manrope,sans-serif;background:var(--v);color:#fff;border:0;
     <label class="opt"><input type="checkbox" name="logo" value="ναι"> Θα ανεβάσω το λογότυπο (και οδηγίες brand, αν έχω) στον φάκελο του Drive</label>
   </fieldset>
   <div class="w"><label for="s-msg">Κάτι άλλο που πρέπει να ξέρουμε; <small>(προαιρετικό)</small></label><textarea id="s-msg" name="message"></textarea></div>
+  <fieldset class="w"><legend>Όροι</legend>
+    <label class="opt"><input type="checkbox" name="terms" value="v1-2026-11-25" required> Αποδέχομαι τους&nbsp;<a href="terms.html" target="_blank" rel="noopener">Όρους υπηρεσίας και τη Σύμβαση επεξεργασίας δεδομένων</a>&nbsp;(έκδοση 1, 25/11/2026). Ισχύουν και για τον δωρεάν μήνα.</label>
+  </fieldset>
   <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
   <div class="w"><button type="submit">Αποστολή</button><span id="msg" role="status"></span></div>
 </form>
@@ -117,6 +120,7 @@ f.addEventListener('submit', async ev => {
   ev.preventDefault();
   const d = Object.fromEntries(new FormData(f).entries());
   if (!d.business || !d.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email) || !d.about) { msg.textContent = 'Συμπληρώστε επιχείρηση, υπεύθυνο, σωστό email και τι κάνει η επιχείρηση.'; return; }
+  if (!d.terms) { msg.textContent = 'Για να ξεκινήσουμε, χρειάζεται να αποδεχτείτε τους όρους (τετραγωνάκι «Όροι»).'; return; }
   if (d.website) return;
   d.type = 'setup'; d.lang = 'el';
   msg.textContent = 'Αποστολή…';
