@@ -121,6 +121,7 @@ nav .links a:hover{color:var(--v)}
 .p .rate b{display:block;font:800 26px "M PLUS Rounded 1c",sans-serif}
 .p .rate span{font-size:13px;color:var(--mut)}
 .p .who{color:var(--mut)}
+.plans .lede{margin-top:12px;color:var(--mut);max-width:60ch}
 .p .btn{margin-top:auto;justify-content:center}
 @media(max-width:860px){.pl{grid-template-columns:1fr}}
 .all{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 24px;margin-top:28px;padding:0;list-style:none}
@@ -248,7 +249,8 @@ footer a{color:#fff}
 
 <section class="band plans" id="plans"><div class="in">
   <p class="kick"><span class="el">Πακέτα</span><span class="en">Plans</span></p>
-  <h2><span class="el">Μία τιμή τον μήνα. Διαλέγετε πόσο συχνά.</span><span class="en">One monthly price. You choose how often.</span></h2>
+  <h2 id="pl-h"></h2>
+  <p class="lede" id="pl-sub"></p>
   <div class="pl" id="pl"></div>
   <ul class="all" id="all"></ul>
   <p class="fine"><span class="el">Reel ή carousel μετράει ως 1 post. Το πολύ 1 post και 1 story τη μέρα. Ο πρώτος μήνας είναι μήνας γνωριμίας, με περισσότερες διορθώσεις μέχρι να μάθουμε το ύφος σας.</span><span class="en">A reel or carousel counts as 1 post. At most 1 post and 1 story a day. The first month is a getting-to-know-you month, with more corrections until we learn your style.</span></p>
@@ -262,7 +264,7 @@ footer a{color:#fff}
 <section class="band contact" id="contact"><div class="in grid">
   <div>
     <h2><span class="el">Πείτε μας για την επιχείρησή σας</span><span class="en">Tell us about your business</span></h2>
-    <p style="margin-top:14px;color:#ECE4FF"><span class="el">Θα σας απαντήσουμε με email, με πρόταση πακέτου και τι χρειάζεται για να ξεκινήσουμε.</span><span class="en">We will reply by email with a suggested plan and what we need to get started.</span></p>
+    <p style="margin-top:14px;color:#ECE4FF"><span class="el">Θα σας απαντήσουμε με email: πρόταση πακέτου, τιμή και τι χρειάζεται για να ξεκινήσουμε.</span><span class="en">We will reply by email with a suggested plan, the price and what we need to get started.</span></p>
     <p class="mailto"><span class="el">Ή γράψτε μας:</span><span class="en">Or write to us:</span> <a href="mailto:okpublisher.gr@gmail.com">okpublisher.gr@gmail.com</a></p>
   </div>
   <form id="f" novalidate>
@@ -317,12 +319,18 @@ const ben = [
   ['Χωρίς πώληση διαφήμισης', 'No ad upselling', 'Δεν σας υποσχόμαστε «viral». Σας υποσχόμαστε σελίδα ζωντανή και συνεπή, χρόνο που κερδίζετε, και επαφές που μετριούνται.', 'We do not promise "viral". We promise a page that stays alive and consistent, time you get back, and contacts you can count.'],
 ];
 document.getElementById('ben').innerHTML = ben.map(([a, b, c, d]) => `<div><h3>${T(a, b)}</h3><p>${T(c, d)}</p></div>`).join('');
+// Τιμές στο site: null = χωρίς τιμές (απόφαση 25/11/2026, όπως και τα posts του OKP) — δεν υπάρχουν ούτε στον κώδικα της σελίδας.
+// Επαναφορά: PRICES = [Βασικό, Μεσαίο, Καθημερινό] από το docs/okpublisher-plan.md (publisher-work)· τα υπόλοιπα προσαρμόζονται μόνα τους.
+const PRICES = null;
+const SHOW_PRICES = Array.isArray(PRICES);
 const plans = [
-  ['Βασικό', 'Basic', 100, 2, 9, 'Για να μένει η σελίδα ζωντανή, χωρίς να ασχολείστε.', 'Keeps your page alive, without your time.'],
-  ['Μεσαίο', 'Standard', 150, 4, 17, 'Σταθερή παρουσία κάθε δεύτερη μέρα.', 'A steady presence every other day.'],
-  ['Καθημερινό', 'Daily', 250, 7, 30, 'Κάθε μέρα post και story. Θέλει υλικό κάθε μέρα.', 'A post and a story every day. Needs material every day.'],
+  ['Βασικό', 'Basic', 2, 9, 'Για να μένει η σελίδα ζωντανή, χωρίς να ασχολείστε.', 'Keeps your page alive, without your time.'],
+  ['Μεσαίο', 'Standard', 4, 17, 'Σταθερή παρουσία κάθε δεύτερη μέρα.', 'A steady presence every other day.'],
+  ['Καθημερινό', 'Daily', 7, 30, 'Κάθε μέρα post και story. Θέλει υλικό κάθε μέρα.', 'A post and a story every day. Needs material every day.'],
 ];
-document.getElementById('pl').innerHTML = plans.map(([g, e, p, w, m, dg, de], i) => `<div class="p${i === 1 ? ' mid' : ''}"><h3>${T(g, e)}</h3><div class="price">€${p} <small>${T('+ ΦΠΑ / μήνα', '+ VAT / month')}</small></div><div class="rate"><div><b>${w}</b><span>${T('posts την εβδομάδα', 'posts a week')}</span></div><div><b>${w}</b><span>${T('stories την εβδομάδα', 'stories a week')}</span></div></div><p class="who">${T(dg, de)} ${T(`Περίπου ${m} + ${m} τον μήνα.`, `About ${m} + ${m} a month.`)}</p><a class="btn ${i === 1 ? 'v' : 'y'}" href="#contact" data-plan="${g}">${T('Το θέλω', 'I want this')}</a></div>`).join('');
+document.getElementById('pl-h').innerHTML = SHOW_PRICES ? T('Μία τιμή τον μήνα. Διαλέγετε πόσο συχνά.', 'One monthly price. You choose how often.') : T('Διαλέγετε πόσο συχνά.', 'You choose how often.');
+document.getElementById('pl-sub').innerHTML = SHOW_PRICES ? '' : T('Τα πακέτα διαφέρουν μόνο στη συχνότητα: όλα έχουν όσα γράφουμε πιο κάτω. Πείτε μας για την επιχείρησή σας και σας στέλνουμε πρόταση με την τιμή.', 'Plans differ only in frequency: all include everything listed below. Tell us about your business and we will send you a proposal with the price.');
+document.getElementById('pl').innerHTML = plans.map(([g, e, w, m, dg, de], i) => `<div class="p${i === 1 ? ' mid' : ''}"><h3>${T(g, e)}</h3>${SHOW_PRICES ? `<div class="price">€${PRICES[i]} <small>${T('+ ΦΠΑ / μήνα', '+ VAT / month')}</small></div>` : ''}<div class="rate"><div><b>${w}</b><span>${T('posts την εβδομάδα', 'posts a week')}</span></div><div><b>${w}</b><span>${T('stories την εβδομάδα', 'stories a week')}</span></div></div><p class="who">${T(dg, de)} ${T(`Περίπου ${m} + ${m} τον μήνα.`, `About ${m} + ${m} a month.`)}</p><a class="btn ${i === 1 ? 'v' : 'y'}" href="#contact" data-plan="${g}">${T('Το θέλω', 'I want this')}</a></div>`).join('');
 const all = [['Ένα email έγκρισης τον μήνα', 'One approval email a month'], ['Μηνιαία αναφορά σε ξεχωριστό email', 'Monthly report in a separate email'], ['Αυτόματες ώρες ή οι δικές σας', 'Automatic timing, or your own'], ['Posts, carousels, reels και stories', 'Posts, carousels, reels and stories'], ['Γραφικά με τα χρώματά σας', 'Graphics in your colours'], ['Instagram και Facebook', 'Instagram and Facebook']];
 document.getElementById('all').innerHTML = all.map(([g, e]) => `<li>${T(g, e)}</li>`).join('');
 const qs = [
@@ -334,7 +342,7 @@ const qs = [
 ];
 document.getElementById('qs').innerHTML = qs.map(([a, b, c, d]) => `<details><summary>${T(a, b)}</summary><p>${T(c, d)}</p></details>`).join('');
 const sel = document.getElementById('f-plan');
-const opts = [['', 'Δεν ξέρω ακόμα', 'Not sure yet']].concat(plans.map(p => [p[0], `${p[0]} · €${p[2]}`, `${p[1]} · €${p[2]}`]));
+const opts = [['', 'Δεν ξέρω ακόμα', 'Not sure yet']].concat(plans.map((p, i) => [p[0], SHOW_PRICES ? `${p[0]} · €${PRICES[i]}` : `${p[0]} · ${p[2]} + ${p[2]} την εβδομάδα`, SHOW_PRICES ? `${p[1]} · €${PRICES[i]}` : `${p[1]} · ${p[2]} + ${p[2]} a week`]));
 const fillSel = l => { const v = sel.value; sel.innerHTML = opts.map(([v2, g, e]) => `<option value="${v2}">${l === 'en' ? e : g}</option>`).join(''); sel.value = v; };
 const setLang = (l, save) => {
   document.documentElement.dataset.l = l; document.documentElement.lang = l;
