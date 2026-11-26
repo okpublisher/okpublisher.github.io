@@ -208,6 +208,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
         if (a === 'client_plan') o.plan = v('pl');
         if (a === 'client_free') o.until = v('fu');
         if (a === 'client_charge') { o.plan = v('cp'); o.start = v('cs'); }
+        if (a === 'client_approval') o.mode = v('ap');
         el.disabled = true; el.textContent = 'Μια στιγμή…';
         call(a, o, function (r) { NOTE = r.message || 'Έγινε.'; refresh(); },
           function (m) { flash(m); el.disabled = false; el.removeAttribute('data-sure'); el.textContent = el.getAttribute('data-label'); });
@@ -270,6 +271,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     var b = c.billing, st = [];
     if (c.test) st.push(tag('δοκιμαστικός')); else if (c.live) st.push(tag('ενεργός', 'ok')); else st.push(tag('εκτός δημοσίευσης', 'y'));
     if (c.free) st.push(tag(c.free.until ? 'Δωρεάν έως ' + months(c.free.until) : 'Δωρεάν', 'y'));
+    if (c.no_approval) st.push(tag('Χωρίς έγκριση'));
     if (c.paused) st.push(tag('παύση', 'r'));
     if (c.billing_paused) st.push(tag('παύση: απλήρωτο', 'r'));
     var bill = !b && c.free ? [] : b ? [['Συνδρομή', esc(b.plan) + (b.amount_eur ? ' · ' + eur(b.amount_eur) + '/μήνα' : '') + (b.card ? ' · κάρτα ✓' : ' · χωρίς κάρτα ακόμα')],
@@ -285,7 +287,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
       (c.note ? '<details><summary>Σημειώσεις</summary><div class="kv">' + esc(c.note) + '</div></details>' : '') + sellerSel('client:' + c.key, c.seller) +
       actions(c) + '</div>';
   }
-  // Ενέργειες διαχειριστή: πακέτο, δωρεάν, χρέωση, διακοπή. Κάθε κουμπί θέλει δεύτερο πάτημα.
+  // Ενέργειες διαχειριστή: πακέτο, δωρεάν, χρέωση, διακοπή, έγκριση. Κάθε κουμπί θέλει δεύτερο πάτημα.
   function actions(c) {
     if (D.me.role !== 'admin' || c.test || c.has_config === false) return '';
     var k = esc(c.key), cur = ymNow(), PL = ['Βασικό', 'Μεσαίο', 'Καθημερινό'], pay = paying(c), b = c.billing;
@@ -302,6 +304,8 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     } else if (!b.stop_after) {
       h += '<div class="kv"><b>Συνδρομή</b></div><div class="r2">' + btn('client_stop', 'Διακοπή συνδρομής') + '</div>';
     }
+    h += '<div class="kv"><b>Έγκριση προγράμματος</b> (από την επόμενη παραγωγή)</div><div class="r2"><select id="ap-' + k + '"><option value="email"' + (c.no_approval ? '' : ' selected') +
+      '>Με email (ΟΚ)</option><option value="none"' + (c.no_approval ? ' selected' : '') + '>Χωρίς έγκριση (μόνο ενημέρωση)</option></select>' + btn('client_approval', 'Αλλαγή') + '</div>';
     return h + '</details>';
   }
   // Κόκκινη προειδοποίηση όταν η χρέωση ξεκινά μέσα στους δωρεάν μήνες.
