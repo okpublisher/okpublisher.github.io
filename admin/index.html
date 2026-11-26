@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#14162E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="okpublisher">
+<title>Διαχείριση · okpublisher</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="../img/favicon.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<!--
+  Διαχειριστικό του okpublisher. Τα δεδομένα τα δίνει το Apps Script «okpublisher» (publisher/Admin.gs στο repo
+  okpublisher/publisher) μόνο μετά από σύνδεση με κωδικό στο email. Εδώ δεν υπάρχει κανένα δεδομένο ή κλειδί.
+-->
+<style>
+:root{--v:#5B21D6;--y:#FFD23F;--d:#14162E;--l:#F2ECFF;--g:#4A4C66;--r:#C62828;--ok:#1B7F3B;--line:#E4DDF5}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 Manrope,system-ui,sans-serif;color:var(--d);background:var(--l);-webkit-text-size-adjust:100%}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));background:var(--d);color:#fff;position:sticky;top:0;z-index:2}
+.brand{font:800 19px "M PLUS Rounded 1c",Manrope,sans-serif}.brand b{color:var(--y)}.brand span{font:500 13px Manrope,sans-serif;opacity:.75;margin-left:6px}
+#who{font-size:12px;opacity:.9;text-align:right}#who a{color:var(--y)}
+nav:empty{display:none}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:52px;z-index:1;scrollbar-width:none}
+nav button{flex:0 0 auto;border:1.5px solid var(--v);background:#fff;color:var(--v);border-radius:999px;padding:6px 13px;font:700 14px Manrope,sans-serif}
+nav button.on{background:var(--v);color:#fff}nav button i{font-style:normal;background:var(--y);color:var(--d);border-radius:9px;padding:0 6px;margin-left:5px;font-size:12px}
+main{max-width:760px;margin:0 auto;padding:12px 12px 40px}
+.card{background:#fff;border-radius:16px;padding:13px 15px;margin:0 0 10px;box-shadow:0 1px 2px rgba(20,22,46,.06)}
+.card h3{margin:0 0 2px;font:800 16px/1.3 "M PLUS Rounded 1c",Manrope,sans-serif}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.muted{color:var(--g);font-size:13px}
+.tag{display:inline-block;font-size:12px;border-radius:8px;padding:1px 7px;margin:2px 4px 2px 0;background:var(--l);color:var(--v);font-weight:700}
+.tag.y{background:#FFF6CC;color:#7a5b00}.tag.r{background:#fde7e7;color:var(--r)}.tag.ok{background:#e3f4e8;color:var(--ok)}
+h2{font:800 13px Manrope,sans-serif;margin:18px 4px 8px;color:var(--g);text-transform:uppercase;letter-spacing:.05em}
+a{color:var(--v)}
+details summary{cursor:pointer;color:var(--v);font-size:13px;margin-top:4px}
+.kv{font-size:13px;margin:6px 0 0}.kv div{margin:2px 0}.kv b{color:var(--g);font-weight:700}
+input,select{font:16px Manrope,sans-serif;padding:11px 12px;border:1.5px solid #d6ccef;border-radius:12px;width:100%;background:#fff;color:var(--d)}
+.btn{font:800 16px Manrope,sans-serif;background:var(--v);color:#fff;border:0;border-radius:999px;padding:12px 22px;cursor:pointer;width:100%}
+.btn.s{width:auto;background:#fff;color:var(--v);border:1.5px solid var(--v);padding:6px 12px;font-size:13px}.btn:disabled{opacity:.55}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:6px}.stat .card{margin:0;text-align:center}
+.stat b{display:block;font:800 28px "M PLUS Rounded 1c",Manrope,sans-serif;color:var(--v)}
+.err{background:#fde7e7;color:var(--r);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:14px}
+.search{margin:0 0 10px}.login{max-width:420px;margin:32px auto}.login p{margin:0 0 12px}.grid2{display:grid;gap:10px}
+.pin{font:800 28px "M PLUS Rounded 1c",Manrope,sans-serif;letter-spacing:8px;text-align:center}
+.link{background:none;border:0;color:var(--v);font:600 14px Manrope,sans-serif;text-decoration:underline;cursor:pointer;padding:0}
+</style>
+</head>
+<body>
+<header><div class="brand">ok<b>publisher</b> <span>Διαχείριση</span></div><div id="who"></div></header>
+<nav id="tabs"></nav>
+<main id="main"><p class="muted">Μια στιγμή…</p></main>
+<script>
+// Η διεύθυνση του Apps Script (web app). Τα δεδομένα δίνονται μόνο μετά από σύνδεση.
+var API = '__API__';
+(function () {
+  var S = null, D = null, TAB = 'today', Q = '', LINK = '';
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function store(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* χωρίς αποθήκευση */ } }
+  function $(id) { return document.getElementById(id); }
+  function esc(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function api(o) {
+    o.a = 'admin';
+    return fetch(API, { method: 'POST', body: JSON.stringify(o), redirect: 'follow' }).then(function (r) { return r.json(); });
+  }
+  // act + στοιχεία → ok(r) ή fail(μήνυμα). Χωρίς συνεδρία → ξανά σύνδεση.
+  function call(act, o, ok, fail) {
+    o = o || {}; o.act = act; if (S) o.token = S;
+    api(o).then(function (r) {
+      if (r.ok) return ok(r);
+      if (r.login) { S = null; D = null; store('okp_admin', null); if (LINK) { var c = LINK; LINK = ''; showLink(c); } else showLogin(r.error); return; }
+      (fail || flash)(r.error || 'Κάτι πήγε στραβά.');
+    }).catch(function () { (fail || flash)('Δεν υπάρχει σύνδεση με τον server. Δοκιμάστε ξανά.'); });
+  }
+  function flash(m) { var f = $('flash'); if (!f) { f = document.createElement('div'); f.id = 'flash'; f.className = 'err'; $('main').insertBefore(f, $('main').firstChild); } f.textContent = m; window.scrollTo(0, 0); }
+  function athens(iso, withTime) {
+    if (!iso || !/^\d{4}-/.test(iso)) return esc(iso || '');
+    var o = { timeZone: 'Europe/Athens', weekday: 'short', day: 'numeric', month: 'numeric' };
+    if (withTime !== false) { o.hour = '2-digit'; o.minute = '2-digit'; }
+    return esc(new Date(iso).toLocaleString('el-GR', o));
+  }
+  function dayKey(iso) { return new Date(iso).toLocaleDateString('en-CA', { timeZone: 'Europe/Athens' }); }
+  function months(ym) { if (!ym) return ''; var p = ym.split('-'); return ['Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μάι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'][+p[1] - 1] + ' ' + p[0]; }
+  function eur(n) { return '€' + Number(n || 0).toFixed(2).replace('.', ','); }
+  function tag(t, c) { return t ? '<span class="tag ' + (c || '') + '">' + esc(t) + '</span>' : ''; }
+  function kv(pairs) { return '<div class="kv">' + pairs.filter(function (p) { return p[1]; }).map(function (p) { return '<div><b>' + esc(p[0]) + ':</b> ' + p[1] + '</div>'; }).join('') + '</div>'; }
+  function mail(e) { return e ? '<a href="mailto:' + esc(e) + '">' + esc(e) + '</a>' : ''; }
+  function tel(p) { return p ? '<a href="tel:' + esc(String(p).replace(/[^\d+]/g, '')) + '">' + esc(p) + '</a>' : ''; }
+  function link(u, t) { return u && /^https:\/\//.test(u) ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(t || 'άνοιγμα') + '</a>' : ''; }
+  function isNew(s) { return /^νέο$/i.test(String(s || '').trim()); }
+  function bad(s) { return /Σφάλμα|Δεν δημοσιεύτηκε/.test(s || ''); }
+  function hit(o) { return !Q || JSON.stringify(o).toLowerCase().indexOf(Q) >= 0; }
+  function clientOf(K) { return (D.clients || []).filter(function (c) { return c.key === K; })[0]; }
+  function cname(K) { var c = clientOf(K); return c ? (c.code ? c.code + ' · ' : '') + c.name : K; }
+  var PK = { queued: 'στην ουρά', sending: 'στέλνεται για ΟΚ', sent: 'περιμένει ΟΚ', approved: 'εγκρίθηκε', changes: 'ζητήθηκαν αλλαγές',
+    changes_requested: 'ζητήθηκαν αλλαγές', published: 'δημοσιεύτηκε', done: 'ολοκληρώθηκε' };
+
+  // ------------------------------------------------------------------ σύνδεση
+  function showLogin(msg) {
+    $('tabs').innerHTML = ''; $('who').innerHTML = '';
+    var em = load('okp_admin_email') || '';
+    $('main').innerHTML = '<div class="card login"><h3>Σύνδεση</h3><p class="muted">Γράψτε το email σας. Αν έχει πρόσβαση, θα σας έρθει κωδικός.</p>' +
+      '<div class="grid2"><input id="em" type="email" autocomplete="email" inputmode="email" placeholder="email" value="' + esc(em) + '">' +
+      '<button class="btn" id="go">Στείλε μου κωδικό</button></div>' +
+      (em ? '<p style="margin:14px 0 0"><button class="link" id="have">Έχω ήδη κωδικό</button></p>' : '') +
+      '<p id="lm" class="muted" style="margin-top:12px">' + esc(msg || '') + '</p></div>';
+    $('go').onclick = function () {
+      var b = this, e = $('em').value.trim();
+      if (!e) return;
+      b.disabled = true; store('okp_admin_email', e);
+      call('login', { email: e }, function () { showPin(); }, function (m) { $('lm').textContent = m; b.disabled = false; });
+    };
+    if ($('have')) $('have').onclick = function () { showPin(); };
+  }
+  function showPin(msg) {
+    var em = load('okp_admin_email') || '';
+    $('main').innerHTML = '<div class="card login"><h3>Κωδικός</h3><p class="muted">Γράψτε τον 6ψήφιο κωδικό που στάλθηκε στο <b>' + esc(em) + '</b>. ' +
+      'Ισχύει 15 λεπτά. (Ή πατήστε τον σύνδεσμο του email.)</p>' +
+      '<div class="grid2"><input id="pin" class="pin" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="••••••">' +
+      '<button class="btn" id="go">Σύνδεση</button></div>' +
+      '<p style="margin:14px 0 0"><button class="link" id="back">Άλλο email ή νέος κωδικός</button></p>' +
+      '<p id="lm" class="muted" style="margin-top:12px">' + esc(msg || '') + '</p></div>';
+    $('pin').focus();
+    $('go').onclick = function () {
+      var b = this; b.disabled = true;
+      call('pin', { email: em, pin: $('pin').value }, loggedIn, function (m) { $('lm').textContent = m; b.disabled = false; });
+    };
+    $('pin').onkeydown = function (e) { if (e.key === 'Enter') $('go').click(); };
+    $('back').onclick = function () { showLogin(); };
+  }
+  function showLink(code) {
+    $('main').innerHTML = '<div class="card login"><h3>Σύνδεση στο διαχειριστικό</h3><p class="muted">Πατήστε για να συνδεθείτε σε αυτή τη συσκευή (30 ημέρες).</p>' +
+      '<button class="btn" id="go">Σύνδεση</button><p id="lm" class="muted" style="margin-top:12px"></p></div>';
+    $('go').onclick = function () {
+      var b = this; b.disabled = true;
+      call('link', { code: code }, loggedIn, function (m) { showLogin(m); });
+    };
+  }
+  function loggedIn(r) { S = r.token; store('okp_admin', S); refresh(); }
+  function refresh() {
+    if (!D) $('main').innerHTML = '<p class="muted">Φόρτωση…</p>';
+    call('data', {}, function (r) { D = r.data; render(); }, function (m) { $('main').innerHTML = '<div class="err">' + esc(m) + '</div>'; });
+  }
+  function logout() { call('logout', {}, function () {}, function () {}); S = null; D = null; store('okp_admin', null); showLogin(); }
+
+  // ------------------------------------------------------------------ καρτέλες
+  function tabsList() {
+    var t = [['today', 'Σήμερα'], ['leads', 'Επαφές', D.leads.filter(function (l) { return isNew(l.status); }).length],
+      ['setups', 'Σεταρίσματα', D.setups.filter(function (s) { return isNew(s.status); }).length], ['clients', 'Πελάτες'], ['posts', 'Δημοσιεύσεις']];
+    if (D.me.role === 'admin') t.push(['pay', 'Πληρωμές'], ['users', 'Χρήστες']);
+    return t;
+  }
+  function render() {
+    $('who').innerHTML = esc(D.me.name || D.me.email) + ' · ' + (D.me.role === 'admin' ? 'Διαχειριστής' : 'Πωλητής') +
+      '<br><a href="#" id="rf">ανανέωση</a> · <a href="#" id="lo">έξοδος</a>';
+    $('rf').onclick = function (e) { e.preventDefault(); refresh(); };
+    $('lo').onclick = function (e) { e.preventDefault(); logout(); };
+    $('tabs').innerHTML = tabsList().map(function (t) { return '<button data-t="' + t[0] + '" class="' + (t[0] === TAB ? 'on' : '') + '">' + t[1] + (t[2] ? '<i>' + t[2] + '</i>' : '') + '</button>'; }).join('');
+    Array.prototype.forEach.call($('tabs').querySelectorAll('button'), function (b) { b.onclick = function () { TAB = b.getAttribute('data-t'); Q = ''; render(); window.scrollTo(0, 0); }; });
+    var errs = (D.errors || []).map(function (e) { return '<div class="err">' + esc(e) + '</div>'; }).join('');
+    var V = { today: vToday, leads: vLeads, setups: vSetups, clients: vClients, posts: vPosts, pay: vPay, users: vUsers }[TAB] || vToday;
+    $('main').innerHTML = errs + V();
+    var s = $('q');
+    if (s) { s.value = Q; s.oninput = function () { Q = s.value.trim().toLowerCase(); var p = s.selectionStart; render(); var n = $('q'); n.focus(); n.setSelectionRange(p, p); }; }
+    bind();
+  }
+  function search(ph) { return '<input id="q" class="search" type="search" placeholder="' + esc(ph) + '">'; }
+  function sellerSel(key, cur) {
+    if (D.me.role !== 'admin' || !D.sellers.length) return cur ? tag('Πωλητής: ' + cur) : '';
+    return '<div class="kv"><b>Πωλητής:</b> <select data-assign="' + esc(key) + '" style="width:auto;padding:4px 8px;font-size:13px"><option value="">—</option>' +
+      D.sellers.map(function (s) { return '<option value="' + esc(s.email) + '"' + (s.email === cur ? ' selected' : '') + '>' + esc(s.name || s.email) + '</option>'; }).join('') + '</select></div>';
+  }
+  function bind() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-assign]'), function (el) {
+      el.onchange = function () { el.disabled = true; call('assign', { key: el.getAttribute('data-assign'), email: el.value }, refresh, function (m) { flash(m); el.disabled = false; }); };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-deluser]'), function (el) {
+      el.onclick = function () {
+        if (!el.getAttribute('data-sure')) { el.setAttribute('data-sure', '1'); el.textContent = 'Σίγουρα; Πατήστε ξανά'; return; }
+        el.disabled = true; call('delete_user', { email: el.getAttribute('data-deluser') }, refresh, function (m) { flash(m); el.disabled = false; });
+      };
+    });
+    var add = $('addu');
+    if (add) add.onclick = function () {
+      add.disabled = true;
+      call('save_user', { email: $('ue').value, name: $('un').value, role: $('ur').value }, refresh, function (m) { flash(m); add.disabled = false; });
+    };
+  }
+
+  function vToday() {
+    var today = dayKey(new Date().toISOString());
+    var nl = D.leads.filter(function (l) { return isNew(l.status); }), ns = D.setups.filter(function (s) { return isNew(s.status); });
+    var posts = (D.queue || []).filter(function (p) { return p.at && dayKey(p.at) === today; });
+    var probs = [];
+    (D.queue || []).forEach(function (p) { if (bad(p.ig) || bad(p.fb)) probs.push(esc(cname(p.client)) + ': ' + esc(p.type) + ' ' + athens(p.at) + ' — ' + esc([p.ig, p.fb].filter(bad).join(' / '))); });
+    (D.clients || []).forEach(function (c) {
+      if (c.billing_paused) probs.push(esc(cname(c.key)) + ': παύση δημοσιεύσεων (απλήρωτη συνδρομή)');
+      else if (c.billing && c.billing.unpaid.length && c.billing.card) probs.push(esc(cname(c.key)) + ': απλήρωτο ' + c.billing.unpaid.map(months).join(', '));
+      if (c.paused) probs.push(esc(cname(c.key)) + ': σε παύση (PAUSED)');
+      if (c.billing && c.billing.change) probs.push(esc(cname(c.key)) + ': αλλαγή πακέτου σε ' + esc(c.billing.change.plan) + ' από ' + months(c.billing.change.from) + ' — config (πακέτο, ημέρες) στην παραγωγή της 20ής');
+    });
+    if (D.heartbeat && Date.now() - new Date(D.heartbeat).getTime() > 40 * 60000) probs.unshift('Ο κύκλος δημοσίευσης δεν έχει τρέξει από ' + athens(D.heartbeat));
+    var h = '<div class="stat"><div class="card"><b>' + nl.length + '</b>νέες επαφές</div><div class="card"><b>' + ns.length + '</b>νέα σεταρίσματα</div>' +
+      '<div class="card"><b>' + posts.length + '</b>δημοσιεύσεις σήμερα</div><div class="card"><b>' + (D.clients || []).filter(function (c) { return c.live; }).length + '</b>ενεργοί πελάτες</div></div>';
+    h += '<h2>Θέλει προσοχή</h2>' + (probs.length ? probs.map(function (p) { return '<div class="card">' + p + '</div>'; }).join('') : '<div class="card muted">Τίποτα. Όλα κυλούν.</div>');
+    if (ns.length) h += '<h2>Νέα σεταρίσματα</h2>' + ns.slice(0, 5).map(setupCard).join('');
+    if (nl.length) h += '<h2>Νέες επαφές</h2>' + nl.slice(0, 5).map(leadCard).join('');
+    h += '<h2>Σήμερα δημοσιεύονται</h2>' + (posts.length ? posts.map(postCard).join('') : '<div class="card muted">Τίποτα για σήμερα.</div>');
+    if (D.heartbeat) h += '<p class="muted">Τελευταίος κύκλος δημοσίευσης: ' + athens(D.heartbeat) + '</p>';
+    return h;
+  }
+  function leadCard(l) {
+    return '<div class="card"><div class="row"><h3>' + esc(l.business) + '</h3>' + tag(l.status, isNew(l.status) ? 'y' : '') + '</div>' +
+      '<div class="muted">' + esc(l.name) + ' · ' + esc(l.at) + '</div>' +
+      kv([['Email', mail(l.email)], ['Τηλέφωνο', tel(l.phone)], ['Πακέτο', esc(l.plan || 'δεν ξέρει')], ['Σελίδα', esc(l.social)], ['Πηγή', esc(l.source)],
+        ['Νέα με email', esc(l.news)], ['Μήνυμα', esc(l.message)]]) + sellerSel('lead:' + l.email, l.seller) + '</div>';
+  }
+  function vLeads() { var L = D.leads.filter(hit); return search('Αναζήτηση σε επαφές…') + (L.length ? L.map(leadCard).join('') : '<div class="card muted">Καμία επαφή.</div>'); }
+  function setupCard(s) {
+    var t = s.trial && s.trial !== 'ναι' ? tag('Δωρεάν εβδομάδα: όχι', 'r') : tag('Δωρεάν εβδομάδα', 'ok');
+    var b = s.bill_check && s.bill_check !== 'ΟΚ' ? tag(s.bill_check, 'r') : '';
+    return '<div class="card"><div class="row"><h3>' + (s.code ? esc(s.code) + ' · ' : '') + esc(s.business) + '</h3>' + tag(s.status, isNew(s.status) ? 'y' : '') + '</div>' +
+      '<div class="muted">' + esc(s.name) + ' · ' + esc(s.at) + '</div>' + tag(String(s.plan).split(' ')[0]) + t + b +
+      kv([['Email', mail(s.email)], ['Τηλέφωνα', esc(s.phones)], ['Instagram', esc(s.instagram)], ['Facebook', esc(s.facebook)]]) +
+      '<details><summary>Περισσότερα</summary>' + kv([['Περιοχή', esc(s.address)], ['Τι κάνει', esc(s.about)], ['Ώρες', esc(s.times)], ['Έτοιμα reels', esc(s.reels)],
+        ['Μουσική', esc(s.music)], ['Όροι', esc(s.terms)], ['Τιμολόγηση', esc(s.bill_name)], ['ΑΦΜ', esc(s.afm)]]) + '</details>' +
+      sellerSel(s.code ? 'setup:' + s.code : 'lead:' + s.email, s.seller) + '</div>';
+  }
+  function vSetups() { var L = D.setups.filter(hit); return search('Αναζήτηση σε σεταρίσματα…') + (L.length ? L.map(setupCard).join('') : '<div class="card muted">Κανένα σετάρισμα.</div>'); }
+  function clientCard(c) {
+    var b = c.billing, st = [];
+    if (c.test) st.push(tag('δοκιμαστικός')); else if (c.live) st.push(tag('ενεργός', 'ok')); else st.push(tag('εκτός δημοσίευσης', 'y'));
+    if (c.paused) st.push(tag('παύση', 'r'));
+    if (c.billing_paused) st.push(tag('παύση: απλήρωτο', 'r'));
+    var bill = b ? [['Συνδρομή', esc(b.plan) + (b.amount_eur ? ' · ' + eur(b.amount_eur) + '/μήνα' : '') + (b.card ? ' · κάρτα ✓' : ' · χωρίς κάρτα ακόμα')],
+      ['Επόμενη χρέωση', b.next ? months(b.next) : (b.stop_after ? 'καμία (λήγει)' : '')], ['Λήξη μετά', months(b.stop_after)],
+      ['Αλλαγή πακέτου', b.change ? esc(b.change.plan) + ' από ' + months(b.change.from) : ''],
+      ['Μήνες', b.months.map(function (m) { return months(m.month) + ' ' + (m.st === 'paid' ? '✓' : '(' + esc(m.st) + ')'); }).join(' · ')]] : [['Συνδρομή', 'καμία ακόμα']];
+    var ap = c.approval ? [['Τελευταίο πακέτο', esc((c.approval.label || months(c.approval.month)) + ' — ' + (PK[c.approval.status] || c.approval.status) + (c.approval.round ? ' (γύρος ' + c.approval.round + ')' : ''))]] : [];
+    var next = (D.queue || []).filter(function (p) { return p.client === c.key && new Date(p.at) > new Date(); })[0];
+    return '<div class="card"><div class="row"><h3>' + (c.code ? esc(c.code) + ' · ' : '') + esc(c.name) + '</h3><span class="muted">' + esc(c.key) + '</span></div>' +
+      st.join('') + tag(c.package) + kv([['Instagram', esc(c.accounts && c.accounts.instagram)], ['Facebook', esc(c.accounts && c.accounts.facebook)],
+        ['Επόμενη δημοσίευση', next ? athens(next.at) + ' · ' + esc(next.type) : '']].concat(ap, bill)) +
+      (c.note ? '<details><summary>Σημειώσεις</summary><div class="kv">' + esc(c.note) + '</div></details>' : '') + sellerSel('client:' + c.key, c.seller) + '</div>';
+  }
+  function vClients() { var L = (D.clients || []).filter(hit); return search('Αναζήτηση σε πελάτες…') + (L.length ? L.map(clientCard).join('') : '<div class="card muted">Κανένας πελάτης.</div>'); }
+  function postCard(p) {
+    var cls = function (s) { return bad(s) ? 'r' : (/Δημοσιεύτηκε/.test(s) ? 'ok' : ''); };
+    return '<div class="card"><div class="row"><b>' + athens(p.at) + '</b><span class="muted">' + esc(p.type) + '</span></div><div class="muted">' + esc(cname(p.client)) + '</div>' +
+      (p.caption ? '<div style="font-size:13px;margin:4px 0">' + esc(p.caption) + '…</div>' : '') +
+      tag('IG: ' + (p.ig || '—'), cls(p.ig)) + tag('FB: ' + (p.fb || '—'), cls(p.fb)) + ' ' + link(p.ig_link, 'Instagram') + ' ' + link(p.fb_link, 'Facebook') + '</div>';
+  }
+  function vPosts() {
+    var now = Date.now();
+    var up = (D.queue || []).filter(function (p) { return new Date(p.at).getTime() > now - 6 * 3600000; }).filter(hit).slice(0, 60);
+    var hi = (D.history || []).filter(hit).slice(0, 40);
+    return search('Αναζήτηση…') + '<h2>Επόμενες</h2>' + (up.length ? up.map(postCard).join('') : '<div class="card muted">Η ουρά είναι άδεια.</div>') +
+      '<h2>Ιστορικό</h2>' + (hi.length ? hi.map(function (r) {
+        return '<div class="card"><div class="row"><b>' + athens(r.at) + '</b>' + tag(r.status, bad(r.status) || /σφάλμα|απέτυχε/i.test(r.status) ? 'r' : '') + '</div>' +
+          '<div class="muted">' + esc(cname(r.client)) + ' · ' + esc(r.type) + '</div>' + (r.detail ? '<div style="font-size:13px">' + esc(r.detail) + '</div>' : '') + '</div>';
+      }).join('') : '<div class="card muted">Τίποτα ακόμα.</div>');
+  }
+  function vPay() {
+    var C = (D.clients || []).filter(function (c) { return c.billing; });
+    var h = '<h2>Συνδρομές</h2>' + (C.length ? C.map(function (c) {
+      var b = c.billing;
+      return '<div class="card"><div class="row"><h3>' + esc(cname(c.key)) + '</h3>' + (b.unpaid.length && b.card ? tag('απλήρωτο', 'r') : tag(b.card ? 'κάρτα ✓' : 'χωρίς κάρτα', b.card ? 'ok' : 'y')) + '</div>' +
+        kv([['Πακέτο', esc(b.plan) + ' · ' + eur(b.amount_eur) + '/μήνα'], ['Επόμενη χρέωση', b.next ? months(b.next) : 'καμία'], ['Λήξη μετά', months(b.stop_after)],
+          ['Αλλαγή πακέτου', b.change ? esc(b.change.plan) + ' από ' + months(b.change.from) : '']]) + '</div>';
+    }).join('') : '<div class="card muted">Καμία συνδρομή ακόμα.</div>');
+    var P = (D.payments || []).filter(hit).slice(0, 80);
+    h += '<h2>Κινήσεις</h2>' + search('Αναζήτηση σε κινήσεις…') + (P.length ? P.map(function (p) {
+      return '<div class="card"><div class="row"><b>' + esc(cname(p.client)) + '</b><span class="muted">' + athens(p.at) + '</span></div>' +
+        '<div>' + esc(p.action) + (p.amount !== '' ? ' · ' + eur(p.amount) : '') + (p.month ? ' · ' + esc(/^\d{4}-\d{2}$/.test(p.month) ? months(p.month) : p.month) : '') + '</div>' +
+        '<div class="muted">' + esc(p.result) + '</div></div>';
+    }).join('') : '<div class="card muted">Καμία κίνηση.</div>');
+    return h;
+  }
+  function vUsers() {
+    var h = (D.users || []).map(function (u) {
+      return '<div class="card"><div class="row"><h3>' + esc(u.name || u.email) + '</h3>' + tag(u.role === 'admin' ? 'Διαχειριστής' : 'Πωλητής', u.role === 'admin' ? '' : 'y') + '</div>' +
+        '<div class="muted">' + esc(u.email) + (u.owner ? ' · λογαριασμός okpublisher (πάντα διαχειριστής)' : '') + '</div>' +
+        (!u.owner && u.email !== D.me.email ? '<p style="margin:8px 0 0"><button class="btn s" data-deluser="' + esc(u.email) + '">Αφαίρεση</button></p>' : '') + '</div>';
+    }).join('');
+    h += '<h2>Νέος χρήστης ή αλλαγή ρόλου</h2><div class="card grid2"><input id="ue" type="email" placeholder="email"><input id="un" placeholder="όνομα">' +
+      '<select id="ur"><option value="admin">Διαχειριστής: τα πάντα</option><option value="sales">Πωλητής: μόνο ό,τι του αναθέτεις</option></select>' +
+      '<button class="btn" id="addu">Αποθήκευση</button><p class="muted" style="margin:0">Ο νέος χρήστης παίρνει email με τη διεύθυνση. Μπαίνει με κωδικό στο email του.</p></div>';
+    return h;
+  }
+
+  // ------------------------------------------------------------------ έναρξη
+  var m = /[#&]t=([a-f0-9]{40,80})/.exec(location.hash);
+  if (location.hash) history.replaceState(null, '', location.pathname);   // ο κωδικός δεν μένει στη διεύθυνση
+  S = load('okp_admin');
+  LINK = m ? m[1] : '';
+  if (S) refresh(); else if (LINK) { var c = LINK; LINK = ''; showLink(c); } else showLogin();
+})();
+</script>
+</body>
+</html>
