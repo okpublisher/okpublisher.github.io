@@ -77,6 +77,7 @@ legend small{font-weight:500;color:var(--mut)}
     <p class="fine">Δεν έχετε λογαριασμό Google; Φτιάχνεται δωρεάν. Από το κινητό ανεβάζετε με την εφαρμογή Google Drive: αφήστε την ανοιχτή μέχρι να τελειώσει το ανέβασμα, ειδικά στα βίντεο.</p></div></li>
   <li><b class="n">4</b><div><h3>Ανεβάστε το πρώτο υλικό</h3>
     <p>20–40 φωτογραφίες και βίντεο από το κινητό: τον χώρο, τα προϊόντα, τη δουλειά, την ομάδα (με την άδειά τους). Δεν χρειάζεται να είναι τέλεια. Αν έχετε έτοιμα reels, βάλτε τα στον υποφάκελο «REELS ΕΤΟΙΜΑ».</p>
+    <p><b>Το λογότυπό σας</b>, σε όποια μορφή το έχετε (PNG, JPG, PDF, SVG, AI, ακόμα και φωτογραφία από το κινητό), βάλτε το σε έναν υποφάκελο «ΛΟΓΟΤΥΠΟ» (αν δεν υπάρχει ακόμα, φτιάξτε τον). Το βάζουμε στα posts και, αν έχει φόντο, το καθαρίζουμε εμείς. Αν το αλλάξετε κάποτε, απλώς ανεβάστε το νέο στον ίδιο υποφάκελο.</p>
     <p class="note">Παιδιά ή πελάτες στις φωτογραφίες; Δεν πειράζει: τα πρόσωπα παιδιών τα θολώνουμε πάντα και ονόματα δεν γράφονται ποτέ. Ό,τι δεν θολώνεται σίγουρα, δεν το χρησιμοποιούμε.</p></div></li>
   <li><b class="n">5</b><div><h3>Η δωρεάν εβδομάδα και μετά</h3><p>Από το υλικό σας ετοιμάζουμε <b>3 posts και 3 stories</b> και σας τα στέλνουμε για ένα «ΟΚ». Δημοσιεύονται μέσα σε μια εβδομάδα, στα μέσα του μήνα (αν το σετάρισμα ολοκληρωθεί έως τις 10). Στο τέλος σάς ρωτάμε με email αν συνεχίζουμε: αν ναι, πληρώνετε με κάρτα τον 1ο μήνα (μέσω viva.com) και ξεκινάμε την 1η· αν όχι, δεν χρωστάτε τίποτα. Μετά, γύρω στις 20 του μήνα σάς στέλνουμε όλο τον επόμενο μήνα σε PDF. Απαντάτε «ΟΚ» ή γράφετε τι αλλάζει, και από την 1η δημοσιεύεται μόνο του. Στο τέλος του μήνα έρχεται η αναφορά με τα αποτελέσματα.</p></div></li>
 </ol>
@@ -92,6 +93,7 @@ legend small{font-weight:500;color:var(--mut)}
   <div><label for="s-phone">Τηλέφωνα που θα γράφουμε στα posts <small>(προαιρετικό)</small></label><input id="s-phone" name="phones" type="tel" placeholder="π.χ. 2310 000000, 690 0000000"></div>
   <div><label for="s-fb">Σελίδα Facebook</label><input id="s-fb" name="facebook" placeholder="facebook.com/…"></div>
   <div><label for="s-ig">Instagram</label><input id="s-ig" name="instagram" placeholder="@"></div>
+  <div class="w"><label for="s-web">Ιστοσελίδα <small>(προαιρετικό · από εκεί παίρνουμε χρώματα, γραμματοσειρές και ύφος)</small></label><input id="s-web" name="site_url" inputmode="url" autocomplete="url" placeholder="π.χ. www.epixeirisi.gr"></div>
   <div class="w"><label for="s-addr">Διεύθυνση ή περιοχή <small>(για τα posts και τα hashtags περιοχής)</small></label><input id="s-addr" name="address"></div>
   <div class="w"><label for="s-about">Τι κάνει η επιχείρηση; Βασικές υπηρεσίες ή προϊόντα</label><textarea id="s-about" name="about" required></textarea></div>
   <div class="w"><label for="s-rules">Τι ΔΕΝ θέλετε να γράφουμε; <small>(κανόνες του κλάδου, λέξεις, θέματα)</small></label><textarea id="s-rules" name="rules"></textarea></div>
@@ -113,7 +115,7 @@ legend small{font-weight:500;color:var(--mut)}
     <label class="opt"><input type="radio" name="music" value="Χωρίς μουσική"> Χωρίς μουσική</label>
   </fieldset>
   <fieldset class="w"><legend>Λογότυπο και χρώματα</legend>
-    <label class="opt"><input type="checkbox" name="logo" value="ναι"> Θα ανεβάσω το λογότυπο (και οδηγίες brand, αν έχω) στον φάκελο του Drive</label>
+    <label class="opt"><input type="checkbox" name="logo" value="ναι"> Θα ανεβάσω το λογότυπο (και οδηγίες brand, αν έχω) στον υποφάκελο «ΛΟΓΟΤΥΠΟ» του φακέλου Drive, σε όποια μορφή το έχω</label>
   </fieldset>
   <fieldset class="w"><legend>Στοιχεία τιμολόγησης <small>(για το παραστατικό κάθε μήνα)</small></legend>
     <div class="bill">
@@ -154,6 +156,12 @@ f.addEventListener('submit', async ev => {
   if (d.website) return;
   d.type = 'setup'; d.lang = 'el';
   if (ref) d.ref = ref;
+  if (d.site_url) {   // ιστοσελίδα: με https:// αν λείπει· αν δεν μοιάζει με διεύθυνση, ζητάμε διόρθωση
+    let w = d.site_url.trim().replace(/\s+/g, '');
+    if (!/^https?:\/\//i.test(w)) w = 'https://' + w.replace(/^\/+/, '');
+    if (!/^https?:\/\/[^\/\s?#]+\.[^\/\s?#]{2,}/i.test(w)) { msg.textContent = 'Η ιστοσελίδα δεν φαίνεται σωστή (π.χ. www.epixeirisi.gr). Διορθώστε τη ή αφήστε την κενή.'; return; }
+    d.site_url = w;
+  }
   msg.textContent = 'Αποστολή…';
   btn.disabled = true;
   try {

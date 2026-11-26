@@ -347,10 +347,20 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     var b = s.bill_check && s.bill_check !== 'ΟΚ' ? tag(s.bill_check, 'r') : '';
     return '<div class="card"><div class="row"><h3>' + (s.code ? esc(s.code) + ' · ' : '') + esc(s.business) + '</h3>' + tag(s.status, isNew(s.status) ? 'y' : '') + '</div>' +
       '<div class="muted">' + esc(s.name) + ' · ' + esc(s.at) + '</div>' + tag(String(s.plan).split(' ')[0]) + t + b +
-      kv([['Email', mail(s.email)], ['Τηλέφωνα', esc(s.phones)], ['Instagram', esc(s.instagram)], ['Facebook', esc(s.facebook)]]) +
+      kv([['Email', mail(s.email)], ['Τηλέφωνα', esc(s.phones)], ['Instagram', esc(s.instagram)], ['Facebook', esc(s.facebook)],
+        ['Ιστοσελίδα', s.website ? link(s.website, s.website.replace(/^https?:\/\//, '').replace(/\/$/, '')) : '']]) + siteInfo(s) +
       '<details><summary>Περισσότερα</summary>' + kv([['Περιοχή', esc(s.address)], ['Τι κάνει', esc(s.about)], ['Ώρες', esc(s.times)], ['Έτοιμα reels', esc(s.reels)],
         ['Μουσική', esc(s.music)], ['Όροι', esc(s.terms)], ['Τιμολόγηση', esc(s.bill_name)], ['ΑΦΜ', esc(s.afm)]]) + '</details>' +
       sellerSel(s.code ? 'setup:' + s.code : 'lead:' + s.email, s) + '</div>';
+  }
+  // Τι βρήκε το script στην ιστοσελίδα: χρώματα (κουτάκια) και γραμματοσειρές, ή γιατί δεν τη διάβασε.
+  function siteInfo(s) {
+    if (!s.website) return '';
+    var x = s.site;
+    if (!x) return kv([['Brand από ιστοσελίδα', '<span class="muted">σε αναμονή (κάθε ώρα)</span>']]);
+    if (!x.ok) return kv([['Brand από ιστοσελίδα', '<span style="color:var(--r)">δεν διαβάστηκε' + (x.err ? ': ' + esc(x.err) : '') + (x.tries < 3 ? ' · ξαναδοκιμάζει' : '') + '</span>']]);
+    var sw = (x.colors || []).map(function (c) { return /^#[0-9A-F]{6}$/i.test(c) ? '<span title="' + c + '" style="display:inline-block;width:18px;height:18px;border-radius:5px;margin-right:3px;vertical-align:-4px;border:1px solid var(--line);background:' + c + '"></span>' : ''; }).join('');
+    return kv([['Χρώματα', sw || '—'], ['Γραμματοσειρές', esc((x.fonts || []).join(', ') || '—')]]);
   }
   function vSetups() { var L = D.setups.filter(hit).filter(bySeller); return search('Αναζήτηση σε σεταρίσματα…', 1) + (L.length ? L.map(setupCard).join('') : '<div class="card muted">Κανένα σετάρισμα.</div>'); }
   // «Τι ισχύει»: πάντα οι ίδιες γραμμές, για να φαίνεται με μια ματιά (και στους πωλητές).
