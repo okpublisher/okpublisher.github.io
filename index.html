@@ -410,6 +410,8 @@ const src = (() => {
   return 'απευθείας';
 })();
 document.getElementById('f-src').value = src;
+// Κωδικός πωλητή (okpublisher.gr/?p=…): πάει κρυφά με τη φόρμα, χωρίς πεδίο και χωρίς αποθήκευση στον browser.
+const ref = (q => /^[a-z0-9]{4,10}$/.test(q) ? q : '')((new URLSearchParams(location.search).get('p') || '').trim().toLowerCase());
 const btn = f.querySelector('button[type="submit"]');
 f.addEventListener('submit', async ev => {
   ev.preventDefault();
@@ -419,6 +421,7 @@ f.addEventListener('submit', async ev => {
   if (!d.name || !d.business || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { msg.textContent = en ? 'Please fill in name, business and a valid email.' : 'Συμπληρώστε όνομα, επιχείρηση και σωστό email.'; return; }
   if (d.website) return;
   d.lang = en ? 'en' : 'el';
+  if (ref) d.ref = ref;
   if (d.addon_reels) { d.message = '[Πρόσθετο: γύρισμα/μοντάζ reels] ' + (d.message || ''); delete d.addon_reels; }
   if (!FORM_URL) { msg.textContent = en ? 'The form is not connected yet: please email okpublisher.gr@gmail.com.' : 'Η φόρμα δεν έχει συνδεθεί ακόμα: γράψτε μας στο okpublisher.gr@gmail.com.'; return; }
   msg.textContent = en ? 'Sending…' : 'Αποστολή…';

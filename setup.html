@@ -138,6 +138,8 @@ const FORM_URL = 'https://script.google.com/macros/s/AKfycbzgDYs8OVVCYGqSMgI4MCo
 const f = document.getElementById('f'), msg = document.getElementById('msg');
 // Ελληνικός ΑΦΜ: 9 ψηφία, το τελευταίο είναι ψηφίο ελέγχου.
 const afmOk = a => { if (!/^\d{9}$/.test(a) || a === '000000000') return false; let s = 0; for (let i = 0; i < 8; i++) s += +a[i] * 2 ** (8 - i); return (s % 11) % 10 === +a[8]; };
+// Κωδικός πωλητή (setup.html?p=…): πάει κρυφά με τη φόρμα, χωρίς πεδίο και χωρίς αποθήκευση στον browser.
+const ref = (q => /^[a-z0-9]{4,10}$/.test(q) ? q : '')((new URLSearchParams(location.search).get('p') || '').trim().toLowerCase());
 const btn = f.querySelector('button[type="submit"]');
 f.addEventListener('submit', async ev => {
   ev.preventDefault();
@@ -151,6 +153,7 @@ f.addEventListener('submit', async ev => {
   if (!d.terms) { msg.textContent = 'Για να ξεκινήσουμε, χρειάζεται να αποδεχτείτε τους όρους (τετραγωνάκι «Όροι»).'; return; }
   if (d.website) return;
   d.type = 'setup'; d.lang = 'el';
+  if (ref) d.ref = ref;
   msg.textContent = 'Αποστολή…';
   btn.disabled = true;
   try {
