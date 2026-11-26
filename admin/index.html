@@ -461,7 +461,10 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
   }
   function vPosts() {
     var now = Date.now();
-    var up = (D.queue || []).filter(function (p) { return new Date(p.at).getTime() > now - 6 * 3600000; }).filter(hit).filter(bySellerC).slice(0, 60);
+    // Επόμενες: ό,τι δεν έχει έρθει η ώρα του, και ό,τι πέρασε (έως 6 ώρες) αλλά περιμένει ή έχει σφάλμα. Τα δημοσιευμένα → «Δημοσιεύτηκαν».
+    var pending = function (p) { return /Σε αναμονή|Σφάλμα/.test((p.ig || '') + ' ' + (p.fb || '')); };
+    var up = (D.queue || []).filter(function (p) { var t = new Date(p.at).getTime(); return t > now || (t > now - 6 * 3600000 && pending(p)); })
+      .filter(hit).filter(bySellerC).slice(0, 60);
     var pub = (D.published || []).filter(hit).filter(bySellerC);
     var pr = (D.problems || []).filter(hit).filter(bySellerC).slice(0, 40);
     return search('Αναζήτηση…', 1) + '<h2>Επόμενες</h2>' + (up.length ? up.map(postCard).join('') : '<div class="card muted">Η ουρά είναι άδεια.</div>') +
