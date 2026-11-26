@@ -117,7 +117,10 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
   }
   function ymNow() { return new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Athens' }).slice(0, 7); }
   function ymAdd(ym, n) { var p = ym.split('-').map(Number), t = p[0] * 12 + p[1] - 1 + n; return Math.floor(t / 12) + '-' + ('0' + (t % 12 + 1)).slice(-2); }
-  function paying(c) { var b = c.billing; return !!(b && b.card && !(b.stop_after && b.stop_after < ymNow())); }
+  function paying(c) { var b = c.billing; return !!(b && b.card && !b.offer && !(b.stop_after && b.stop_after < ymNow())); }
+  // Ημερομηνία «2027-01-27» → «27/1/2027»· περίοδος/μήνας με την ετικέτα που στέλνει το script (ή τον μήνα).
+  function dmy(s) { var p = String(s || '').split('-'); return p.length === 3 ? (+p[2]) + '/' + (+p[1]) + '/' + p[0] : ''; }
+  function per(b, ym) { return b && b.day > 1 ? (b.months.filter(function (x) { return x.month === ym; })[0] || {}).label || months(ym) : months(ym); }
   function athens(iso, withTime) {
     if (!iso || !/^\d{4}-/.test(iso)) return esc(iso || '');
     var o = { timeZone: 'Europe/Athens', weekday: 'short', day: 'numeric', month: 'numeric' };
@@ -315,7 +318,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     (D.queue || []).forEach(function (p) { if (bad(p.ig) || bad(p.fb)) probs.push(esc(cname(p.client)) + ': ' + esc(p.type) + ' ' + athens(p.at) + ' — ' + esc([p.ig, p.fb].filter(bad).join(' / '))); });
     (D.clients || []).forEach(function (c) {
       if (c.billing_paused) probs.push(esc(cname(c.key)) + ': παύση δημοσιεύσεων (απλήρωτη συνδρομή)');
-      else if (c.billing && c.billing.unpaid.length && c.billing.card) probs.push(esc(cname(c.key)) + ': απλήρωτο ' + c.billing.unpaid.map(months).join(', '));
+      else if (c.billing && c.billing.unpaid.length && c.billing.card) probs.push(esc(cname(c.key)) + ': απλήρωτο ' + (c.billing.unpaid_labels || c.billing.unpaid.map(months)).join(', '));
       if (c.paused) probs.push(esc(cname(c.key)) + ': σε παύση (PAUSED)');
       var cur = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Athens' }).slice(0, 7);
       if (c.free && c.free.until && !(c.billing && c.billing.card)) {
@@ -323,7 +326,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
         else if (c.free.until < cur) probs.push(esc(cname(c.key)) + ': έληξε ο δωρεάν χρόνος (' + months(c.free.until) + '), χωρίς συνδρομή');
       }
       if (c.pkg_change && !(c.billing && c.billing.change)) probs.push(esc(cname(c.key)) + ': αλλαγή πακέτου σε ' + esc(c.pkg_change.plan) + ' από ' + months(c.pkg_change.from) + ' — config στην παραγωγή της 20ής');
-      if (c.billing && c.billing.change) probs.push(esc(cname(c.key)) + ': αλλαγή πακέτου σε ' + esc(c.billing.change.plan) + ' από ' + months(c.billing.change.from) + ' — config (πακέτο, ημέρες) στην παραγωγή της 20ής');
+      if (c.billing && c.billing.change) probs.push(esc(cname(c.key)) + ': αλλαγή πακέτου σε ' + esc(c.billing.change.plan) + ' από ' + (c.billing.change.from_label || months(c.billing.change.from)) + ' — config (πακέτο, ημέρες) στην παραγωγή εκείνης της περιόδου');
     });
     if (D.heartbeat && Date.now() - new Date(D.heartbeat).getTime() > 40 * 60000) probs.unshift('Ο κύκλος δημοσίευσης δεν έχει τρέξει από ' + athens(D.heartbeat));
     var h = (D.me.role === 'admin' ? '' : myLink()) + '<div class="stat"><div class="card"><b>' + nl.length + '</b>νέες επαφές</div><div class="card"><b>' + ns.length + '</b>νέα σεταρίσματα</div>' +
@@ -372,10 +375,13 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     R.push(['Πακέτο', [c.package ? c.package + (PLAN[c.package] ? ' · ' + PLAN[c.package] : '') : 'Ειδικό (εκτός πακέτων)', ''], ch ? '→ ' + ch.plan + ' από ' + months(ch.from) : '']);
     if (c.free) bl = !c.free.until ? ['Δωρεάν, χωρίς λήξη', 'ok'] : c.free.until < cur ? ['Δωρεάν — έληξε ' + months(c.free.until) + ', χωρίς συνδρομή', 'r'] : ['Δωρεάν έως και ' + months(c.free.until), 'ok'];
     else if (!b) bl = ['Καμία συνδρομή ακόμα', 'y'];
-    else if (b.unpaid.length && b.card) bl = ['Απλήρωτο: ' + b.unpaid.map(months).join(', '), 'r'];
-    else if (b.stop_after && b.stop_after < cur) bl = ['Η συνδρομή έληξε (' + months(b.stop_after) + ')', 'y'];
-    else if (b.card) bl = ['Συνδρομή ' + b.plan + ' · ' + eur(b.amount_eur) + '/μήνα · κάρτα ✓' + (b.stop_after ? ' · τελευταίος μήνας ' + months(b.stop_after) : ''), 'ok'];
-    else bl = ['Συνδρομή ' + b.plan + ' — περιμένει την 1η πληρωμή' + (b.start ? ' (' + months(b.start) + ')' : ''), 'y'];
+    else if (b.offer) bl = b.offer.closed ? [b.offer.cancelled ? 'Η πρόταση μετά τη δωρεάν εβδομάδα ακυρώθηκε' : 'Δεν συνέχισε μετά τη δωρεάν εβδομάδα', b.offer.cancelled ? 'y' : 'r']
+      : ['Δωρεάν εβδομάδα: «Συνεχίζουμε;» (μέρα ' + b.offer.day + '/14, σύνδεσμοι έως ' + dmy(b.offer.until) + ', διάλεξε ' + b.offer.chosen + ')', 'y'];
+    else if (b.unpaid.length && b.card) bl = ['Απλήρωτο: ' + (b.unpaid_labels || b.unpaid.map(months)).join(', '), 'r'];
+    else if (b.stop_after && b.stop_after < cur) bl = ['Η συνδρομή έληξε (' + (b.stop_label || months(b.stop_after)) + ')', 'y'];
+    else if (b.card) bl = ['Συνδρομή ' + b.plan + ' · ' + eur(b.amount_eur) + '/μήνα · κάρτα ✓' + (b.day > 1 ? ' · χρέωση στις ' + b.day + ' κάθε μήνα' : '') +
+      (b.stop_after ? ' · τελευταία περίοδος ' + (b.stop_label || months(b.stop_after)) : ''), 'ok'];
+    else bl = ['Συνδρομή ' + b.plan + ' — περιμένει την 1η πληρωμή' + (b.start ? ' (' + per(b, b.start) + ')' : ''), 'y'];
     R.push(['Χρέωση', bl]);
     R.push(['Πωλητής', [srcText(c).replace(/<[^>]+>/g, ''), '']]);
     R.push(['Έγκριση', c.no_approval ? ['Χωρίς έγκριση — μόνο ενημερωτικό email', ''] : ['Με email — ο πελάτης απαντά «ΟΚ»', '']]);
@@ -386,8 +392,8 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
   }
   function clientCard(c) {
     var b = c.billing;
-    var bill = b ? [['Επόμενη χρέωση', b.next ? months(b.next) : (b.stop_after ? 'καμία (λήγει)' : '')],
-      ['Μήνες', b.months.map(function (m) { return months(m.month) + ' ' + (m.st === 'paid' ? '✓' + (m.pay ? ' ' + esc(m.pay) : '') : '(' + esc(m.st) + ')'); }).join(' · ')]] : [];
+    var bill = b && !b.offer ? [['Επόμενη χρέωση', b.next ? (b.day > 1 ? dmy(b.next_date) : months(b.next)) : (b.stop_after ? 'καμία (λήγει)' : '')],
+      [b.day > 1 ? 'Περίοδοι' : 'Μήνες', b.months.map(function (m) { return (b.day > 1 ? m.label : months(m.month)) + ' ' + (m.st === 'paid' ? '✓' + (m.pay ? ' ' + esc(m.pay) : '') : '(' + esc(m.st) + ')'); }).join(' · ')]] : [];
     var ap = c.approval ? [['Τελευταίο πακέτο', esc((c.approval.label || months(c.approval.month)) + ' — ' + (PK[c.approval.status] || c.approval.status) + (c.approval.round ? ' (γύρος ' + c.approval.round + ')' : ''))]] : [];
     var next = (D.queue || []).filter(function (p) { return p.client === c.key && new Date(p.at) > new Date(); })[0];
     return '<div class="card"><div class="row"><h3>' + (c.code ? esc(c.code) + ' · ' : '') + esc(c.name) + '</h3><span class="muted">' + esc(c.key) + '</span></div>' +
@@ -461,12 +467,12 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
           L.map(function (x) { return '<div class="kv">' + esc((x.code ? x.code + ' · ' : '') + x.client_name) + ' · ' + esc(x.pay) + ' · καθαρό ' + eur(x.net) + ' × ' + x.pct + '% = <b>' + eur(x.amount) + '</b></div>'; }).join('') + '</details>';
       }).join('') + '</div>';
     }).join('');
-    var C = (D.clients || []).filter(function (c) { return c.billing; });
+    var C = (D.clients || []).filter(function (c) { return c.billing && !c.billing.offer; });
     h += '<h2>Συνδρομές</h2>' + (C.length ? C.map(function (c) {
       var b = c.billing;
       return '<div class="card"><div class="row"><h3>' + esc(cname(c.key)) + '</h3>' + (b.unpaid.length && b.card ? tag('απλήρωτο', 'r') : tag(b.card ? 'κάρτα ✓' : 'χωρίς κάρτα', b.card ? 'ok' : 'y')) + '</div>' +
-        kv([['Πακέτο', esc(b.plan) + ' · ' + eur(b.amount_eur) + '/μήνα'], ['Επόμενη χρέωση', b.next ? months(b.next) : 'καμία'], ['Λήξη μετά', months(b.stop_after)],
-          ['Αλλαγή πακέτου', b.change ? esc(b.change.plan) + ' από ' + months(b.change.from) : '']]) + '</div>';
+        kv([['Πακέτο', esc(b.plan) + ' · ' + eur(b.amount_eur) + '/μήνα' + (b.day > 1 ? ' · χρέωση στις ' + b.day : '')], ['Επόμενη χρέωση', b.next ? (b.day > 1 ? dmy(b.next_date) : months(b.next)) : 'καμία'],
+          ['Λήξη μετά', b.stop_after ? (b.stop_label || months(b.stop_after)) : ''], ['Αλλαγή πακέτου', b.change ? esc(b.change.plan) + ' από ' + (b.change.from_label || months(b.change.from)) : '']]) + '</div>';
     }).join('') : '<div class="card muted">Καμία συνδρομή ακόμα.</div>');
     var R = (D.payments || []).filter(function (p) { return !p.pay; }).filter(hit).slice(0, 80);
     h += '<details><summary>Άλλες κινήσεις (σύνδεσμοι, υπενθυμίσεις, λύσεις) · ' + R.length + '</summary>' + R.map(function (p) {
