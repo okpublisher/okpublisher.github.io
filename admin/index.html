@@ -46,6 +46,9 @@ input,select{font:16px Manrope,sans-serif;padding:11px 12px;border:1.5px solid #
 .err{background:#fde7e7;color:var(--r);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:14px}
 .search{margin:0 0 10px}.login{max-width:420px;margin:32px auto}.login p{margin:0 0 12px}.grid2{display:grid;gap:10px}
 .pin{font:800 28px "M PLUS Rounded 1c",Manrope,sans-serif;letter-spacing:8px;text-align:center}
+.ok-msg{background:#e3f4e8;color:var(--ok);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:14px}
+.act{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}.act .r2{display:flex;gap:6px;margin:6px 0}.act select{padding:8px 10px;font-size:14px}
+.act .btn.s{white-space:nowrap}
 .link{background:none;border:0;color:var(--v);font:600 14px Manrope,sans-serif;text-decoration:underline;cursor:pointer;padding:0}
 </style>
 </head>
@@ -57,7 +60,7 @@ input,select{font:16px Manrope,sans-serif;padding:11px 12px;border:1.5px solid #
 // Η διεύθυνση του Apps Script (web app). Τα δεδομένα δίνονται μόνο μετά από σύνδεση.
 var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZihrwON18KhSL_EgL2lRsiE4PPfMXweZXMWMEFoyN/exec';
 (function () {
-  var S = null, D = null, TAB = 'today', Q = '', LINK = '';
+  var S = null, D = null, TAB = 'today', Q = '', LINK = '', NOTE = '';
   function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function store(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* χωρίς αποθήκευση */ } }
   function $(id) { return document.getElementById(id); }
@@ -76,6 +79,10 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     }).catch(function () { (fail || flash)('Δεν υπάρχει σύνδεση με τον server. Δοκιμάστε ξανά.'); });
   }
   function flash(m) { var f = $('flash'); if (!f) { f = document.createElement('div'); f.id = 'flash'; f.className = 'err'; $('main').insertBefore(f, $('main').firstChild); } f.textContent = m; window.scrollTo(0, 0); }
+  function flashOk(m) { var f = $('flash'); if (f) f.parentNode.removeChild(f); f = document.createElement('div'); f.id = 'flash'; f.className = 'ok-msg'; f.textContent = m; $('main').insertBefore(f, $('main').firstChild); window.scrollTo(0, 0); }
+  function ymNow() { return new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Athens' }).slice(0, 7); }
+  function ymAdd(ym, n) { var p = ym.split('-').map(Number), t = p[0] * 12 + p[1] - 1 + n; return Math.floor(t / 12) + '-' + ('0' + (t % 12 + 1)).slice(-2); }
+  function paying(c) { var b = c.billing; return !!(b && b.card && !(b.stop_after && b.stop_after < ymNow())); }
   function athens(iso, withTime) {
     if (!iso || !/^\d{4}-/.test(iso)) return esc(iso || '');
     var o = { timeZone: 'Europe/Athens', weekday: 'short', day: 'numeric', month: 'numeric' };
@@ -142,7 +149,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
   function loggedIn(r) { S = r.token; store('okp_admin', S); refresh(); }
   function refresh() {
     if (!D) $('main').innerHTML = '<p class="muted">Φόρτωση…</p>';
-    call('data', {}, function (r) { D = r.data; render(); }, function (m) { $('main').innerHTML = '<div class="err">' + esc(m) + '</div>'; });
+    call('data', {}, function (r) { D = r.data; render(); if (NOTE) { flashOk(NOTE); NOTE = ''; } }, function (m) { $('main').innerHTML = '<div class="err">' + esc(m) + '</div>'; });
   }
   function logout() { call('logout', {}, function () {}, function () {}); S = null; D = null; store('okp_admin', null); showLogin(); }
 
@@ -183,6 +190,19 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
         el.disabled = true; call('delete_user', { email: el.getAttribute('data-deluser') }, refresh, function (m) { flash(m); el.disabled = false; });
       };
     });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-do]'), function (el) {
+      el.onclick = function () {
+        if (!el.getAttribute('data-sure')) { el.setAttribute('data-sure', '1'); el.setAttribute('data-label', el.textContent); el.textContent = 'Σίγουρα; Ξανά'; return; }
+        var K = el.getAttribute('data-client'), a = el.getAttribute('data-do'), v = function (id) { var x = $(id + '-' + K); return x ? x.value : ''; };
+        var o = { client: K };
+        if (a === 'client_plan') o.plan = v('pl');
+        if (a === 'client_free') o.until = v('fu');
+        if (a === 'client_charge') { o.plan = v('cp'); o.start = v('cs'); }
+        el.disabled = true; el.textContent = 'Μια στιγμή…';
+        call(a, o, function (r) { NOTE = r.message || 'Έγινε.'; refresh(); },
+          function (m) { flash(m); el.disabled = false; el.removeAttribute('data-sure'); el.textContent = el.getAttribute('data-label'); });
+      };
+    });
     var add = $('addu');
     if (add) add.onclick = function () {
       add.disabled = true;
@@ -205,6 +225,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
         if (c.free.until === cur) probs.push(esc(cname(c.key)) + ': δωρεάν ως το τέλος του μήνα — χρέωση ή παράταση πριν τις 20');
         else if (c.free.until < cur) probs.push(esc(cname(c.key)) + ': έληξε ο δωρεάν χρόνος (' + months(c.free.until) + '), χωρίς συνδρομή');
       }
+      if (c.pkg_change && !(c.billing && c.billing.change)) probs.push(esc(cname(c.key)) + ': αλλαγή πακέτου σε ' + esc(c.pkg_change.plan) + ' από ' + months(c.pkg_change.from) + ' — config στην παραγωγή της 20ής');
       if (c.billing && c.billing.change) probs.push(esc(cname(c.key)) + ': αλλαγή πακέτου σε ' + esc(c.billing.change.plan) + ' από ' + months(c.billing.change.from) + ' — config (πακέτο, ημέρες) στην παραγωγή της 20ής');
     });
     if (D.heartbeat && Date.now() - new Date(D.heartbeat).getTime() > 40 * 60000) probs.unshift('Ο κύκλος δημοσίευσης δεν έχει τρέξει από ' + athens(D.heartbeat));
@@ -250,7 +271,28 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     return '<div class="card"><div class="row"><h3>' + (c.code ? esc(c.code) + ' · ' : '') + esc(c.name) + '</h3><span class="muted">' + esc(c.key) + '</span></div>' +
       st.join('') + tag(c.package) + kv([['Instagram', esc(c.accounts && c.accounts.instagram)], ['Facebook', esc(c.accounts && c.accounts.facebook)],
         ['Επόμενη δημοσίευση', next ? athens(next.at) + ' · ' + esc(next.type) : '']].concat(ap, bill)) +
-      (c.note ? '<details><summary>Σημειώσεις</summary><div class="kv">' + esc(c.note) + '</div></details>' : '') + sellerSel('client:' + c.key, c.seller) + '</div>';
+      (c.pkg_change && !(b && b.change) ? kv([['Αλλαγή πακέτου', esc(c.pkg_change.plan) + ' από ' + months(c.pkg_change.from)]]) : '') +
+      (c.note ? '<details><summary>Σημειώσεις</summary><div class="kv">' + esc(c.note) + '</div></details>' : '') + sellerSel('client:' + c.key, c.seller) +
+      actions(c) + '</div>';
+  }
+  // Ενέργειες διαχειριστή: πακέτο, δωρεάν, χρέωση, διακοπή. Κάθε κουμπί θέλει δεύτερο πάτημα.
+  function actions(c) {
+    if (D.me.role !== 'admin' || c.test || c.has_config === false) return '';
+    var k = esc(c.key), cur = ymNow(), PL = ['Βασικό', 'Μεσαίο', 'Καθημερινό'], pay = paying(c), b = c.billing;
+    var plans = function (id, sel) { return '<select id="' + id + '">' + PL.map(function (p) { return '<option' + (p === sel ? ' selected' : '') + '>' + p + '</option>'; }).join('') + '</select>'; };
+    var mo = function (id, from, n, first) { var o = first || ''; for (var i = 0; i < n; i++) { var y = ymAdd(from, i); o += '<option value="' + y + '">' + months(y) + '</option>'; } return '<select id="' + id + '">' + o + '</select>'; };
+    var btn = function (act, label) { return '<button class="btn s" data-do="' + act + '" data-client="' + k + '">' + label + '</button>'; };
+    var h = '<details class="act"><summary>Ενέργειες</summary>';
+    h += '<div class="kv"><b>Πακέτο</b> (από την επόμενη παραγωγή)</div><div class="r2">' + plans('pl-' + k, (b && b.change && b.change.plan) || (c.pkg_change && c.pkg_change.plan) || (b && b.plan) || c.package) + btn('client_plan', 'Αλλαγή') + '</div>';
+    if (!pay) {
+      h += '<div class="kv"><b>Δωρεάν</b></div><div class="r2">' + mo('fu-' + k, cur, 13, '<option value="">χωρίς λήξη</option>') + btn('client_free', 'Δωρεάν') + '</div>';
+      if (c.has_email) h += '<div class="kv"><b>Χρέωση</b> (σύνδεσμος πληρωμής στον πελάτη)</div><div class="r2">' + plans('cp-' + k, c.package || 'Βασικό') +
+        mo('cs-' + k, c.free && c.free.until && c.free.until >= cur ? ymAdd(c.free.until, 1) : ymAdd(cur, 1), 4) + btn('client_charge', 'Αποστολή') + '</div>';
+      else h += '<div class="kv muted">Για χρέωση χρειάζεται email πελάτη (NOTIFY_TO).</div>';
+    } else if (!b.stop_after) {
+      h += '<div class="kv"><b>Συνδρομή</b></div><div class="r2">' + btn('client_stop', 'Διακοπή συνδρομής') + '</div>';
+    }
+    return h + '</details>';
   }
   function vClients() { var L = (D.clients || []).filter(hit); return search('Αναζήτηση σε πελάτες…') + (L.length ? L.map(clientCard).join('') : '<div class="card muted">Κανένας πελάτης.</div>'); }
   function postCard(p) {
