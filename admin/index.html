@@ -186,6 +186,27 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     };
   }
   function loggedIn(r) { S = r.token; store('okp_admin', S); refresh(); }
+  // Νέα έκδοση της σελίδας; Η εφαρμογή στην αρχική οθόνη κρατά την παλιά στη μνήμη.
+  // Ρωτάμε τον server πότε άλλαξε η σελίδα· αν είναι νεότερη από αυτήν που τρέχει, τη φορτώνουμε ξανά.
+  var VCHK = 0;
+  function newVersion(then) {
+    var mine = Date.parse(document.lastModified), done = false;
+    function go(v) { if (!done) { done = true; then(v); } }
+    if (!window.fetch || !mine) return go(0);
+    setTimeout(function () { go(0); }, 4000);
+    fetch(location.pathname + '?v=' + Date.now(), { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+      var lm = Date.parse(r.headers.get('last-modified') || '');
+      go(r.ok && lm && lm > mine + 2000 && load('okp_admin_rl') !== String(lm) ? lm : 0);
+    }).catch(function () { go(0); });
+  }
+  function reloadIfNew(otherwise) {
+    VCHK = Date.now();
+    newVersion(function (lm) {
+      if (!lm) { if (otherwise) otherwise(); return; }
+      store('okp_admin_rl', String(lm)); store('okp_admin_tab', TAB);   // μία φορά ανά έκδοση· ίδια καρτέλα μετά
+      location.replace(location.pathname + '?v=' + lm);
+    });
+  }
   function refresh() {
     if (!D) $('main').innerHTML = '<p class="muted">Φόρτωση…</p>';
     call('data', {}, function (r) { D = r.data; render(); if (NOTE) { flashOk(NOTE); NOTE = ''; } }, function (m) { $('main').innerHTML = '<div class="err">' + esc(m) + '</div>'; });
@@ -202,7 +223,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
   function render() {
     $('who').innerHTML = esc(D.me.name || D.me.email) + ' · ' + (D.me.role === 'admin' ? 'Διαχειριστής' : 'Πωλητής') +
       '<br><a href="#" id="rf">ανανέωση</a> · <a href="#" id="lo">έξοδος</a>';
-    $('rf').onclick = function (e) { e.preventDefault(); refresh(); };
+    $('rf').onclick = function (e) { e.preventDefault(); reloadIfNew(refresh); };
     $('lo').onclick = function (e) { e.preventDefault(); logout(); };
     $('tabs').innerHTML = tabsList().map(function (t) { return '<button data-t="' + t[0] + '" class="' + (t[0] === TAB ? 'on' : '') + '">' + t[1] + (t[2] ? '<i>' + t[2] + '</i>' : '') + '</button>'; }).join('');
     Array.prototype.forEach.call($('tabs').querySelectorAll('button'), function (b) { b.onclick = function () { TAB = b.getAttribute('data-t'); Q = ''; render(); window.scrollTo(0, 0); }; });
@@ -527,10 +548,15 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
 
   // ------------------------------------------------------------------ έναρξη
   var m = /[#&]t=([a-f0-9]{40,80})/.exec(location.hash);
-  if (location.hash) history.replaceState(null, '', location.pathname);   // ο κωδικός δεν μένει στη διεύθυνση
+  if (location.hash || location.search) history.replaceState(null, '', location.pathname);   // ο κωδικός (και το ?v=) δεν μένει στη διεύθυνση
   S = load('okp_admin');
   LINK = m ? m[1] : '';
+  var t0 = load('okp_admin_tab'); if (t0) { TAB = t0; store('okp_admin_tab', null); }
   if (S) refresh(); else if (LINK) { var c = LINK; LINK = ''; showLink(c); } else showLogin();
+  reloadIfNew();
+  document.addEventListener('visibilitychange', function () {   // η εφαρμογή ξαναβγαίνει μπροστά
+    if (document.visibilityState === 'visible' && Date.now() - VCHK > 60000) reloadIfNew();
+  });
 })();
 </script>
 </body>
