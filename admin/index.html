@@ -406,7 +406,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     return '<div class="kv"><b>Ομάδα</b> (αλυσίδα: κοινό brand, λογότυπα, κανόνες· χωριστή χρέωση και εγκρίσεις ανά κατάστημα)</div><div class="r2"><select id="gr-' + id + '">' +
       '<option value="">Καμία (δικό του brand)</option>' + (D.groups || []).map(function (g) { return '<option value="' + esc(g.key) + '"' + (g.key === cur ? ' selected' : '') + '>' + esc(g.name) + '</option>'; }).join('') +
       '<option value="+">Νέα ομάδα…</option></select><button class="btn s" data-do="' + act + '" data-client="' + id + '">Αλλαγή</button></div>' +
-      '<input id="gn-' + id + '" placeholder="όνομα αλυσίδας (π.χ. Learning & Sensory)" style="display:none;margin-top:6px">';
+      '<input id="gn-' + id + '" placeholder="όνομα αλυσίδας" style="display:none;margin-top:6px">';
   }
   function facts(c) {
     var b = c.billing, cur = ymNow(), R = [], ch = (b && b.change) || c.pkg_change, bl, d = c.days;
