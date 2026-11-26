@@ -366,13 +366,14 @@ const FORM_URL = 'https://script.google.com/macros/s/AKfycbzgDYs8OVVCYGqSMgI4MCo
 const T = (el, en) => `<span class="el">${el}</span><span class="en">${en}</span>`;
 // planner: Ιανουάριος 2027 ξεκινά Παρασκευή· posts Δευ/Τετ/Παρ/Κυρ, story τις ίδιες μέρες (Μεσαίο πακέτο)
 const days = ['Δευ|Mon','Τρι|Tue','Τετ|Wed','Πεμ|Thu','Παρ|Fri','Σαβ|Sat','Κυρ|Sun'];
-const imgs = ['p1','p2','p3','p4'];
+// μία διαφορετική ανάρτηση για κάθε μέρα με post (18), με σειρά που βγάζει νόημα: Πρωτοχρονιά, Φώτα, συμβουλές 1→4 κ.λπ.
+const imgs = ['p5','p1','p6','p7','p2','p8','p3','p9','p10','p11','p12','p13','p14','p15','p16','p17','p18','p19'];
 let h = days.map(d => { const [g, e] = d.split('|'); return `<div class="h">${T(g, e)}</div>`; }).join('');
 h += '<div class="d e"></div>'.repeat(4);
 let k = 0;
 for (let n = 1; n <= 31; n++) {
   const wd = (4 + n - 1) % 7, post = [0, 2, 4, 6].includes(wd);
-  h += `<div class="d">${post ? `<img src="img/${imgs[k++ % 4]}.jpg" alt="" loading="lazy">` : ''}<span class="n">${n}</span>${post ? '<i class="st"></i>' : ''}</div>`;
+  h += `<div class="d">${post ? `<img src="img/${imgs[k++ % imgs.length]}.jpg" alt="" loading="lazy">` : ''}<span class="n">${n}</span>${post ? '<i class="st"></i>' : ''}</div>`;
 }
 document.getElementById('cal').innerHTML = h;
 document.getElementById('feed').innerHTML = [['p1', 'Το πρωινό μας', 'Our mornings'], ['p2', 'Στον πάγκο', 'On the counter'], ['p3', 'Συμβουλή, 2 από 4', 'Tip, 2 of 4'], ['p4', 'Κάλεσμα', 'Call to action'], ['s1', 'Story', 'Story']]
