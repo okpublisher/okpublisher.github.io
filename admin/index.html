@@ -47,7 +47,7 @@ input,select{font:16px Manrope,sans-serif;padding:11px 12px;border:1.5px solid #
 .search{margin:0 0 10px}.login{max-width:420px;margin:32px auto}.login p{margin:0 0 12px}.grid2{display:grid;gap:10px}
 .pin{font:800 28px "M PLUS Rounded 1c",Manrope,sans-serif;letter-spacing:8px;text-align:center}
 .ok-msg{background:#e3f4e8;color:var(--ok);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:14px}
-.act{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}.act .r2{display:flex;gap:6px;margin:6px 0}.act select{padding:8px 10px;font-size:14px}
+.act{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}.act .r2{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.act select{padding:8px 10px;font-size:14px;flex:1 1 130px;width:auto}
 .act .btn.s{white-space:nowrap}
 .link{background:none;border:0;color:var(--v);font:600 14px Manrope,sans-serif;text-decoration:underline;cursor:pointer;padding:0}
 </style>
@@ -190,9 +190,19 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
         el.disabled = true; call('delete_user', { email: el.getAttribute('data-deluser') }, refresh, function (m) { flash(m); el.disabled = false; });
       };
     });
+    Array.prototype.forEach.call(document.querySelectorAll('select[id^="cs-"]'), function (el) {
+      var K = el.id.slice(3), c = clientOf(K);
+      if (c && c.free && c.free.until && c.free.until >= ymNow()) el.value = ymAdd(c.free.until, 1);   // προεπιλογή: μετά τη λήξη
+      chargeWarn(K);
+      el.onchange = function () { chargeWarn(K); var b = document.querySelector('[data-do="client_charge"][data-client="' + K + '"]'); if (b && b.getAttribute('data-sure')) { b.removeAttribute('data-sure'); b.textContent = b.getAttribute('data-label'); } };
+    });
     Array.prototype.forEach.call(document.querySelectorAll('[data-do]'), function (el) {
       el.onclick = function () {
-        if (!el.getAttribute('data-sure')) { el.setAttribute('data-sure', '1'); el.setAttribute('data-label', el.textContent); el.textContent = 'Σίγουρα; Ξανά'; return; }
+        if (!el.getAttribute('data-sure')) {
+          el.setAttribute('data-sure', '1'); el.setAttribute('data-label', el.textContent);
+          el.textContent = el.getAttribute('data-do') === 'client_charge' && chargeWarn(el.getAttribute('data-client')) ? 'Ακυρώνει τα δωρεάν· Ξανά' : 'Σίγουρα; Ξανά';
+          return;
+        }
         var K = el.getAttribute('data-client'), a = el.getAttribute('data-do'), v = function (id) { var x = $(id + '-' + K); return x ? x.value : ''; };
         var o = { client: K };
         if (a === 'client_plan') o.plan = v('pl');
@@ -287,12 +297,22 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     if (!pay) {
       h += '<div class="kv"><b>Δωρεάν</b></div><div class="r2">' + mo('fu-' + k, cur, 13, '<option value="">χωρίς λήξη</option>') + btn('client_free', 'Δωρεάν') + '</div>';
       if (c.has_email) h += '<div class="kv"><b>Χρέωση</b> (σύνδεσμος πληρωμής στον πελάτη)</div><div class="r2">' + plans('cp-' + k, c.package || 'Βασικό') +
-        mo('cs-' + k, c.free && c.free.until && c.free.until >= cur ? ymAdd(c.free.until, 1) : ymAdd(cur, 1), 4) + btn('client_charge', 'Αποστολή') + '</div>';
+        mo('cs-' + k, cur, 7) + btn('client_charge', 'Αποστολή') + '</div><div class="kv" id="cw-' + k + '" style="color:var(--r);font-weight:700"></div>';
       else h += '<div class="kv muted">Για χρέωση χρειάζεται email πελάτη (NOTIFY_TO).</div>';
     } else if (!b.stop_after) {
       h += '<div class="kv"><b>Συνδρομή</b></div><div class="r2">' + btn('client_stop', 'Διακοπή συνδρομής') + '</div>';
     }
     return h + '</details>';
+  }
+  // Κόκκινη προειδοποίηση όταν η χρέωση ξεκινά μέσα στους δωρεάν μήνες.
+  function chargeWarn(K) {
+    var c = clientOf(K), s = $('cs-' + K), w = $('cw-' + K);
+    if (!c || !s || !w) return '';
+    var t = c.free && (!c.free.until || s.value <= c.free.until)
+      ? (c.free.until ? 'Είναι δωρεάν έως ' + months(c.free.until) + '. Η χρέωση από ' + months(s.value) + ' ακυρώνει τους δωρεάν μήνες ' + months(s.value) + '–' + months(c.free.until) + '.'
+        : 'Είναι δωρεάν χωρίς λήξη. Η χρέωση τον βγάζει από τα δωρεάν.') : '';
+    w.textContent = t;
+    return t;
   }
   function vClients() { var L = (D.clients || []).filter(hit); return search('Αναζήτηση σε πελάτες…') + (L.length ? L.map(clientCard).join('') : '<div class="card muted">Κανένας πελάτης.</div>'); }
   function postCard(p) {
