@@ -54,6 +54,7 @@ input,select{font:16px Manrope,sans-serif;padding:11px 12px;border:1.5px solid #
 .ok-msg{background:#e3f4e8;color:var(--ok);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:14px}
 .act{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}.act .r2{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.act select{padding:8px 10px;font-size:14px;flex:1 1 130px;width:auto}
 .act .btn.s{white-space:nowrap}
+a.btn{text-decoration:none;display:inline-block;text-align:center}
 .link{background:none;border:0;color:var(--v);font:600 14px Manrope,sans-serif;text-decoration:underline;cursor:pointer;padding:0}
 </style>
 </head>
@@ -444,17 +445,31 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     var cls = function (s) { return bad(s) ? 'r' : (/Δημοσιεύτηκε/.test(s) ? 'ok' : ''); };
     return '<div class="card"><div class="row"><b>' + athens(p.at) + '</b><span class="muted">' + esc(p.type) + '</span></div><div class="muted">' + esc(cname(p.client)) + '</div>' +
       (p.caption ? '<div style="font-size:13px;margin:4px 0">' + esc(p.caption) + '…</div>' : '') +
-      tag('IG: ' + (p.ig || '—'), cls(p.ig)) + tag('FB: ' + (p.fb || '—'), cls(p.fb)) + ' ' + link(p.ig_link, 'Instagram') + ' ' + link(p.fb_link, 'Facebook') + '</div>';
+      tag('IG: ' + (p.ig || '—'), cls(p.ig)) + tag('FB: ' + (p.fb || '—'), cls(p.fb)) +
+      (linkBtn(p.ig_link, 'Instagram') + linkBtn(p.fb_link, 'Facebook') ? '<div class="r2">' + linkBtn(p.ig_link, 'Instagram') + linkBtn(p.fb_link, 'Facebook') + '</div>' : '') + '</div>';
+  }
+  // Φίλτρο πωλητή για δημοσιεύσεις (ο πωλητής του πελάτη).
+  function bySellerC(o) { var c = clientOf(o.client); return bySeller({ seller: c ? c.seller : '' }); }
+  function linkBtn(u, t) { return u && /^https:\/\//.test(u) ? '<a class="btn s" href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(t) + '</a>' : ''; }
+  // «Δημοσιεύτηκαν»: μία κάρτα ανά δημοσίευση, με κουμπιά που ανοίγουν την ανάρτηση.
+  function pubCard(p) {
+    var st = function (x) { return x ? x.status : '—'; }, cls = function (x) { return !x ? '' : /Δημοσιεύτηκε/.test(x.status) ? 'ok' : /Σφάλμα|Δεν δημοσιεύτηκε/.test(x.status) ? 'r' : ''; };
+    var b = linkBtn(p.ig && p.ig.link, 'Instagram') + linkBtn(p.fb && p.fb.link, 'Facebook');
+    return '<div class="card"><div class="row"><b>' + athens(p.at) + '</b><span class="muted">' + esc(p.type) + '</span></div><div class="muted">' + esc(cname(p.client)) + '</div>' +
+      (p.caption ? '<div style="font-size:13px;margin:4px 0">' + esc(p.caption) + '…</div>' : '') +
+      tag('IG: ' + st(p.ig), cls(p.ig)) + tag('FB: ' + st(p.fb), cls(p.fb)) + (b ? '<div class="r2">' + b + '</div>' : '') + '</div>';
   }
   function vPosts() {
     var now = Date.now();
-    var up = (D.queue || []).filter(function (p) { return new Date(p.at).getTime() > now - 6 * 3600000; }).filter(hit).slice(0, 60);
-    var hi = (D.history || []).filter(hit).slice(0, 40);
-    return search('Αναζήτηση…') + '<h2>Επόμενες</h2>' + (up.length ? up.map(postCard).join('') : '<div class="card muted">Η ουρά είναι άδεια.</div>') +
-      '<h2>Ιστορικό</h2>' + (hi.length ? hi.map(function (r) {
-        return '<div class="card"><div class="row"><b>' + athens(r.at) + '</b>' + tag(r.status, bad(r.status) || /σφάλμα|απέτυχε/i.test(r.status) ? 'r' : '') + '</div>' +
-          '<div class="muted">' + esc(cname(r.client)) + ' · ' + esc(r.type) + '</div>' + (r.detail ? '<div style="font-size:13px">' + esc(r.detail) + '</div>' : '') + '</div>';
-      }).join('') : '<div class="card muted">Τίποτα ακόμα.</div>');
+    var up = (D.queue || []).filter(function (p) { return new Date(p.at).getTime() > now - 6 * 3600000; }).filter(hit).filter(bySellerC).slice(0, 60);
+    var pub = (D.published || []).filter(hit).filter(bySellerC);
+    var pr = (D.problems || []).filter(hit).filter(bySellerC).slice(0, 40);
+    return search('Αναζήτηση…', 1) + '<h2>Επόμενες</h2>' + (up.length ? up.map(postCard).join('') : '<div class="card muted">Η ουρά είναι άδεια.</div>') +
+      '<h2>Δημοσιεύτηκαν · 30 ημέρες</h2>' + (pub.length ? pub.map(pubCard).join('') : '<div class="card muted">Τίποτα ακόμα.</div>') +
+      (pr.length ? '<h2>Σφάλματα · 30 ημέρες</h2>' + pr.map(function (r) {
+        return '<div class="card"><div class="row"><b>' + athens(r.at) + '</b>' + tag(r.status, 'r') + '</div>' +
+          '<div class="muted">' + esc(cname(r.client)) + ' · ' + esc(r.type) + ' · ' + esc(r.id) + '</div>' + (r.detail ? '<div style="font-size:13px">' + esc(r.detail) + '</div>' : '') + '</div>';
+      }).join('') : '');
   }
   function vPay() {
     var P = (D.payments || []).filter(function (p) { return p.pay; }).filter(hit);
