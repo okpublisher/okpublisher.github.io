@@ -409,8 +409,10 @@ const src = (() => {
   return 'απευθείας';
 })();
 document.getElementById('f-src').value = src;
+const btn = f.querySelector('button[type="submit"]');
 f.addEventListener('submit', async ev => {
   ev.preventDefault();
+  if (btn.disabled) return;   // διπλό πάτημα: μία αποστολή
   const en = document.documentElement.dataset.l === 'en';
   const d = Object.fromEntries(new FormData(f).entries());
   if (!d.name || !d.business || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { msg.textContent = en ? 'Please fill in name, business and a valid email.' : 'Συμπληρώστε όνομα, επιχείρηση και σωστό email.'; return; }
@@ -419,11 +421,13 @@ f.addEventListener('submit', async ev => {
   if (d.addon_reels) { d.message = '[Πρόσθετο: γύρισμα/μοντάζ reels] ' + (d.message || ''); delete d.addon_reels; }
   if (!FORM_URL) { msg.textContent = en ? 'The form is not connected yet: please email okpublisher.gr@gmail.com.' : 'Η φόρμα δεν έχει συνδεθεί ακόμα: γράψτε μας στο okpublisher.gr@gmail.com.'; return; }
   msg.textContent = en ? 'Sending…' : 'Αποστολή…';
+  btn.disabled = true;
   try {
     await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) });
     f.reset(); fillSel(d.lang); document.getElementById('f-src').value = src;
     msg.textContent = en ? 'Thank you! We will reply by email.' : 'Ευχαριστούμε! Θα σας απαντήσουμε με email.';
   } catch (e) { msg.textContent = en ? 'Could not send: please email okpublisher.gr@gmail.com.' : 'Δεν στάλθηκε: γράψτε μας στο okpublisher.gr@gmail.com.'; }
+  finally { btn.disabled = false; }
 });
 }
 </script>
