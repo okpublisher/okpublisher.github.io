@@ -62,6 +62,8 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .pl input{width:20px;height:20px;margin-top:3px;accent-color:var(--v);flex:none}.pl i{color:var(--v);font-style:normal;font-weight:700}
 .mylink{font:700 15px Manrope,sans-serif;background:var(--l);border-radius:10px;padding:8px 10px;word-break:break-all;margin:8px 0}
 .qr{text-align:center;margin:8px 0}
+.how>div{background:#FAF8FF;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;margin-top:6px;font-size:14px}
+.how p{margin:4px 0}.how ol{margin:6px 0;padding-left:20px}.how li{margin:4px 0}
 details summary{cursor:pointer;color:var(--v);font-weight:700;font-size:14px;margin-top:6px}
 .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0 0}.stat div{background:#FAF8FF;border-radius:12px;padding:10px;text-align:center;font-size:13px;color:var(--g)}
 .stat b{display:block;font:800 22px "M PLUS Rounded 1c",Manrope,sans-serif;color:var(--v)}
@@ -223,7 +225,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
       inp('f-shop', 'Διεύθυνση καταστήματος', p.shop_address, '(οδός, αριθμός, ΤΚ, πόλη)') +
       inp('f-area', 'Περιοχή', p.area, '(για τα hashtags περιοχής)') +
       inp('f-web', 'Ιστοσελίδα', p.website, '(προαιρετικό)') +
-      inp('f-rev', 'Σύνδεσμος για τις κριτικές σας στο Google', p.reviews, '(προαιρετικό)') +
+      inp('f-rev', 'Σύνδεσμος για τις κριτικές σας στο Google', p.reviews, '(προαιρετικό)') + HOWTO_REV +
       area('f-about', 'Τι κάνει η επιχείρηση', p.about, '(βασικές υπηρεσίες ή προϊόντα)') +
       area('f-avoid', 'Τι ΔΕΝ θέλετε να γράφουμε', p.avoid, '(κανόνες του κλάδου, λέξεις, θέματα)') +
       '<label>Ώρες δημοσίευσης</label>' +
@@ -261,6 +263,8 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     return '<label for="' + id + '">' + esc(label) + (hint ? ' <small>' + esc(hint) + '</small>' : '') + '</label><select id="' + id + '">' +
       ['Ναι', 'Όχι'].map(function (x) { return '<option value="' + x + '"' + (x === v ? ' selected' : '') + '>' + esc((txt && txt[x]) || x) + '</option>'; }).join('') + '</select>';
   }
+  // «Πώς το βρίσκω;» κάτω από τον σύνδεσμο κριτικών Google (ίδιο κείμενο με τη φόρμα σεταρίσματος)
+  var HOWTO_REV = '<details class="how"><summary>Πώς το βρίσκω;</summary><div><p>Είναι ο σύνδεσμος που ανοίγει κατευθείαν τη φόρμα κριτικής της επιχείρησής σας. Μοιάζει με <b>https://g.page/r/…/review</b>. Χρειάζεστε τον λογαριασμό Google που διαχειρίζεται την επιχείρηση στο Google.</p><ol><li><b>Υπολογιστής:</b> συνδεθείτε με αυτόν τον λογαριασμό, ψάξτε στο Google το όνομα της επιχείρησής σας και πατήστε «Ζητήστε κριτικές». Αντιγράψτε τον σύνδεσμο.</li><li><b>Κινητό (Χάρτες Google):</b> με τον ίδιο λογαριασμό, πατήστε τη φωτογραφία σας πάνω δεξιά → «Τα προφίλ επιχείρησής σας» → η επιχείρηση → «Λάβετε περισσότερες κριτικές» (στις Κριτικές ή στους Πελάτες) → αντιγραφή.</li></ol><p>Όχι το «Κοινοποίηση» των Χαρτών: ανοίγει το προφίλ, όχι τη φόρμα κριτικής. Αν δεν τα καταφέρετε, γράψτε μας από το «Κάτι άλλο;» πιο κάτω.</p></div></details>';
   // Ύφος μουσικής: τι γράφει η επιλογή (η τιμή μένει ίδια με τη φόρμα σεταρίσματος)
   var MUSIC_TXT = { 'αφήστε το σε εμάς': 'Αφήστε το σε εμάς', 'Ήρεμη': 'Ήρεμη, χαλαρή', 'Ζωντανή': 'Ζωντανή, με ρυθμό',
     'Κομψή': 'Κομψή, εκλεπτυσμένη', 'Χαρούμενη': 'Χαρούμενη, παιχνιδιάρικη', 'Χωρίς μουσική': 'Χωρίς μουσική στα reels' };

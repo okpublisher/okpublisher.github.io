@@ -50,6 +50,9 @@ button{font:700 17px Manrope,sans-serif;background:var(--v);color:#fff;border:0;
 .bill .w{grid-column:1/-1}
 @media(max-width:600px){.bill{grid-template-columns:1fr}}
 legend small{font-weight:500;color:var(--mut)}
+.how summary{cursor:pointer;color:var(--v);font-weight:700;font-size:14px;margin-top:8px;width:max-content}
+.how>div{background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:8px;font-size:14px;color:var(--ink)}
+.how p{margin:4px 0}.how ol{margin:6px 0;padding-left:20px}.how li{margin:4px 0}
 .msub{font-weight:700;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 2px}
 </style>
 </head>
@@ -102,7 +105,8 @@ legend small{font-weight:500;color:var(--mut)}
   <div class="w"><label for="s-addr">Περιοχή <small>(για τα posts και τα hashtags περιοχής, π.χ. Καλαμαριά)</small></label><input id="s-addr" name="address"></div>
   <div class="w"><label for="s-about">Τι κάνει η επιχείρηση; Βασικές υπηρεσίες ή προϊόντα</label><textarea id="s-about" name="about" required></textarea></div>
   <div class="w"><label for="s-rules">Τι ΔΕΝ θέλετε να γράφουμε; <small>(κανόνες του κλάδου, λέξεις, θέματα)</small></label><textarea id="s-rules" name="rules"></textarea></div>
-  <div class="w"><label for="s-rev">Σύνδεσμος για τις κριτικές σας στο Google <small>(προαιρετικό)</small></label><input id="s-rev" name="reviews" placeholder="https://…"></div>
+  <div class="w"><label for="s-rev">Σύνδεσμος για τις κριτικές σας στο Google <small>(προαιρετικό)</small></label><input id="s-rev" name="reviews" placeholder="https://g.page/r/…/review">
+    <details class="how"><summary>Πώς το βρίσκω;</summary><div><p>Είναι ο σύνδεσμος που ανοίγει κατευθείαν τη φόρμα κριτικής της επιχείρησής σας. Μοιάζει με <b>https://g.page/r/…/review</b>. Χρειάζεστε τον λογαριασμό Google που διαχειρίζεται την επιχείρηση στο Google.</p><ol><li><b>Υπολογιστής:</b> συνδεθείτε με αυτόν τον λογαριασμό, ψάξτε στο Google το όνομα της επιχείρησής σας και πατήστε «Ζητήστε κριτικές». Αντιγράψτε τον σύνδεσμο.</li><li><b>Κινητό (Χάρτες Google):</b> με τον ίδιο λογαριασμό, πατήστε τη φωτογραφία σας πάνω δεξιά → «Τα προφίλ επιχείρησής σας» → η επιχείρηση → «Λάβετε περισσότερες κριτικές» (στις Κριτικές ή στους Πελάτες) → αντιγραφή.</li></ol><p>Όχι το «Κοινοποίηση» των Χαρτών: ανοίγει το προφίλ, όχι τη φόρμα κριτικής. Αν δεν τα καταφέρετε, αφήστε το κενό: το προσθέτετε όποτε θέλετε από τον λογαριασμό σας.</p></div></details></div>
   <fieldset class="w"><legend>Ώρες δημοσίευσης</legend>
     <label class="opt"><input type="radio" name="times" value="αυτόματες" checked> Αυτόματες: όταν είναι online οι περισσότεροι ακόλουθοί σας (προτείνεται)</label>
     <label class="opt"><input type="radio" name="times" value="δικές μου"> Δικές μου ώρες:&nbsp;<input name="times_custom" style="min-height:0;padding:6px 10px;width:auto;flex:1" placeholder="π.χ. posts 19:00, stories 10:00"></label>
