@@ -389,6 +389,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
         if (a === 'client_approval') o.mode = v('ap');
         if (a === 'client_group' || a === 'setup_group') { o.group = v('gr'); o.name = v('gn'); }
         if (a === 'client_agency') o.email = v('ag');
+        if (a === 'client_log_done') o.id = el.getAttribute('data-id');
         if (a === 'setup_group') o = { code: K, group: o.group, name: o.name };
         el.disabled = true; el.textContent = 'Μια στιγμή…';
         call(a, o, function (r) { NOTE = r.message || 'Έγινε.'; refresh(); },
@@ -412,6 +413,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
       if (c.billing_paused) probs.push(esc(cname(c.key)) + ': παύση δημοσιεύσεων (απλήρωτη συνδρομή)');
       else if (c.billing && c.billing.unpaid.length && c.billing.card) probs.push(esc(cname(c.key)) + ': απλήρωτο ' + (c.billing.unpaid_labels || c.billing.unpaid.map(months)).join(', '));
       if (c.paused) probs.push(esc(cname(c.key)) + ': σε παύση (PAUSED)');
+      (c.client_log || []).forEach(function (x) { if (x.kind === 'request' && x.status === 'new') probs.push(esc(cname(c.key)) + ': αίτημα «' + esc(x.title) + '» από τη σελίδα πελάτη'); });
       var cur = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Athens' }).slice(0, 7);
       if (c.free && c.free.until && !(c.billing && c.billing.card)) {
         if (c.free.until === cur) probs.push(esc(cname(c.key)) + ': δωρεάν ως το τέλος του μήνα — χρέωση ή παράταση πριν τις 20');
@@ -451,7 +453,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     var b = s.bill_check && s.bill_check !== 'ΟΚ' ? tag(s.bill_check, 'r') : '';
     return '<div class="card"><div class="row"><h3>' + (s.code ? esc(s.code) + ' · ' : '') + esc(s.business) + '</h3>' + tag(s.status, isNew(s.status) ? 'y' : '') + '</div>' +
       '<div class="muted">' + esc(s.name) + ' · ' + esc(s.at) + '</div>' + tag(String(s.plan).split(' ')[0]) + t + b + (s.help ? tag('Απομακρυσμένη βοήθεια', 'y') : '') +
-      kv([['Email', mail(s.email)], ['Τηλέφωνα', esc(s.phones)], ['Instagram', esc(s.instagram)], ['Facebook', esc(s.facebook)],
+      kv([['Email', mail(s.email)], ['Τηλέφωνα', esc(s.phones)], ['Instagram', esc(s.instagram)], ['Facebook', esc(s.facebook)], ['Διεύθυνση καταστήματος', esc(s.shop_address)],
         ['Ιστοσελίδα', s.website ? link(s.website, s.website.replace(/^https?:\/\//, '').replace(/\/$/, '')) : '']]) + siteInfo(s) +
       '<details><summary>Περισσότερα</summary>' + kv([['Περιοχή', esc(s.address)], ['Τι κάνει', esc(s.about)], ['Ώρες', esc(s.times)], ['Έτοιμα reels', esc(s.reels)],
         ['Μουσική', esc(s.music)], ['Άλλα', esc(s.other)], ['Όροι', esc(s.terms)], ['Τιμολόγηση', esc(s.bill_name)], ['ΑΦΜ', esc(s.afm)]]) + '</details>' +
@@ -521,8 +523,21 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
       facts(c) + kv([['Instagram', esc(c.accounts && c.accounts.instagram)], ['Facebook', esc(c.accounts && c.accounts.facebook)],
         ['Επόμενη δημοσίευση', next ? athens(next.at) + ' · ' + esc(next.type) : ''],
         ['Σύνδεσμος σύστασης', c.referral && c.referral.link && D.me.role === 'admin' ? link(c.referral.link, c.referral.link.replace(/^https:\/\//, '')) : '']].concat(ap, bill)) +
-      (c.note ? '<details><summary>Σημειώσεις</summary><div class="kv">' + esc(c.note) + '</div></details>' : '') + sellerPick('client:' + c.key, c) +
+      (c.note ? '<details><summary>Σημειώσεις</summary><div class="kv">' + esc(c.note) + '</div></details>' : '') + fromClient(c) + sellerPick('client:' + c.key, c) +
       actions(c) + '</div>';
+  }
+  // Αλλαγές και αιτήματα από τη σελίδα πελάτη (okpublisher.gr/client). Τα αιτήματα θέλουν «Έγινε» (μόνο admin).
+  function fromClient(c) {
+    var L = c.client_log || [];
+    if (!L.length) return '';
+    var open = L.filter(function (x) { return x.kind === 'request' && x.status === 'new'; }).length;
+    return '<details class="act"' + (open ? ' open' : '') + '><summary>Από τον πελάτη' + (open ? ' · ' + open + ' αίτημα' + (open > 1 ? 'τα' : '') : '') + '</summary>' +
+      L.map(function (x) {
+        var req = x.kind === 'request', todo = req && x.status === 'new';
+        return '<div class="kv"><b>' + esc(x.title) + '</b> ' + (req ? tag(todo ? 'αίτημα' : 'έγινε ✓', todo ? 'y' : 'ok') : '') +
+          '<div class="muted">' + athens(x.at) + (x.by ? ' · ' + esc(x.by) : '') + '</div>' + (x.lines || []).map(esc).join('<br>') +
+          (todo && D.me.role === 'admin' ? '<div class="r2"><button class="btn s" data-do="client_log_done" data-client="' + esc(c.key) + '" data-id="' + esc(x.id) + '">Έγινε</button></div>' : '') + '</div>';
+      }).join('') + '</details>';
   }
   // Ενέργειες διαχειριστή: πακέτο, δωρεάν, χρέωση, διακοπή, έγκριση. Κάθε κουμπί θέλει δεύτερο πάτημα.
   function actions(c) {
