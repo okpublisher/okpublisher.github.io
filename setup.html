@@ -50,6 +50,7 @@ button{font:700 17px Manrope,sans-serif;background:var(--v);color:#fff;border:0;
 .bill .w{grid-column:1/-1}
 @media(max-width:600px){.bill{grid-template-columns:1fr}}
 legend small{font-weight:500;color:var(--mut)}
+.msub{font-weight:700;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 2px}
 </style>
 </head>
 <body>
@@ -110,18 +111,17 @@ legend small{font-weight:500;color:var(--mut)}
     <label class="opt"><input type="radio" name="reels" value="στις θέσεις των reels" checked> Στη θέση των δικών μας reels, ό,τι περισσεύει τον επόμενο μήνα</label>
     <label class="opt"><input type="radio" name="reels" value="όλα μέσα στον μήνα"> Όλα μέσα στον ίδιο μήνα, με περισσότερες δημοσιεύσεις</label>
   </fieldset>
-  <fieldset class="w"><legend>Μουσική στα reels <small>(ορχηστρική, με άδεια για εμπορική χρήση)</small></legend>
+  <fieldset class="w"><legend>Μουσική <small>(ορχηστρική, με άδεια για εμπορική χρήση · αλλάζει όποτε θέλετε από τον λογαριασμό σας)</small></legend>
+    <div class="msub">Ύφος</div>
     <label class="opt"><input type="radio" name="music" value="αφήστε το σε εμάς" checked> Αφήστε το σε εμάς: ταιριάζουμε τη μουσική στον κλάδο σας</label>
     <label class="opt"><input type="radio" name="music" value="Ήρεμη"> Ήρεμη, χαλαρή</label>
     <label class="opt"><input type="radio" name="music" value="Ζωντανή"> Ζωντανή, με ρυθμό</label>
     <label class="opt"><input type="radio" name="music" value="Κομψή"> Κομψή, εκλεπτυσμένη</label>
     <label class="opt"><input type="radio" name="music" value="Χαρούμενη"> Χαρούμενη, παιχνιδιάρικη</label>
-    <label class="opt"><input type="radio" name="music" value="Χωρίς μουσική"> Χωρίς μουσική</label>
-  </fieldset>
-  <fieldset class="w"><legend>Μουσική στα stories <small>(στο ίδιο ύφος)</small></legend>
-    <label class="opt"><input type="radio" name="music_stories" value="Ναι" checked> Ναι: κάθε story με μουσική</label>
-    <label class="opt"><input type="radio" name="music_stories" value="Όχι"> Όχι: μόνο η εικόνα</label>
-    <small style="display:block;color:var(--mut);margin-top:4px">Αλλάζει όποτε θέλετε από τον λογαριασμό σας.</small>
+    <label class="opt"><input type="radio" name="music" value="Χωρίς μουσική"> Χωρίς μουσική στα reels</label>
+    <div class="msub">Στα stories</div>
+    <label class="opt"><input type="radio" name="music_stories" value="Ναι" checked> Ναι, με μουσική στο ίδιο ύφος</label>
+    <label class="opt"><input type="radio" name="music_stories" value="Όχι"> Όχι, μόνο η εικόνα</label>
   </fieldset>
 
   <fieldset class="w"><legend>Λογότυπο και χρώματα</legend>
