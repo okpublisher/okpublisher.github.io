@@ -178,6 +178,11 @@ textarea{min-height:110px;resize:vertical}
 .hp{position:absolute;left:-9999px}
 #msg{font-weight:600}
 .contact .mailto{margin-top:18px;font-size:15px;color:#ECE4FF}
+/* agencies και freelancers: λωρίδα προς τη σελίδα agencies.html */
+.partner{background:var(--lav)}
+.partner .in{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px 48px;align-items:end}
+.partner p.t{color:var(--mut);margin-bottom:16px}
+@media(max-width:860px){.partner .in{grid-template-columns:1fr}}
 footer{background:var(--ink);color:#C9C3E6;font-size:14px}
 footer .in{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
 footer a{color:#fff}
@@ -329,6 +334,13 @@ footer a{color:#fff}
   </div>
 </div></section>
 
+<section class="band partner" id="partners"><div class="in">
+  <div><p class="kick"><span class="el">Για agencies και freelancers</span><span class="en">For agencies and freelancers</span></p>
+    <h2><span class="el">Έχετε πελάτες στα social; Αναλαμβάνουμε την παραγωγή.</span><span class="en">Managing clients on social? We handle production.</span></h2></div>
+  <div><p class="t"><span class="el">Posts, reels και stories για τους πελάτες σας, χωρίς το όνομά μας, με ένα ΟΚ τον μήνα και μία χρέωση για όλους, με έκπτωση συνεργάτη.</span><span class="en">Posts, reels and stories for your clients, without our name, with one monthly OK and one invoice for all of them, at a partner discount.</span></p>
+    <a class="btn v" href="agencies.html"><span class="el">Συνεργασία για agencies</span><span class="en">Partner with us</span> →</a></div>
+</div></section>
+
 <section class="band contact" id="contact"><div class="in grid">
   <div>
     <h2><span class="el">Πείτε μας για την επιχείρησή σας</span><span class="en">Tell us about your business</span></h2>
@@ -358,6 +370,7 @@ footer a{color:#fff}
   <a href="mailto:okpublisher.gr@gmail.com">okpublisher.gr@gmail.com</a>
   <a href="privacy.html"><span class="el">Πολιτική απορρήτου</span><span class="en">Privacy policy</span></a>
   <a href="terms.html"><span class="el">Όροι υπηρεσίας</span><span class="en">Terms (in Greek)</span></a>
+  <a href="agencies.html"><span class="el">Για agencies</span><span class="en">For agencies</span></a>
   <span>© 2026</span>
 </div></footer>
 

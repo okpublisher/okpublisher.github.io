@@ -325,6 +325,15 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
         call('save_user', { email: u.email, name: u.name, role: u.role, pct: v.value }, function () { NOTE = u.role === 'agency' ? 'Η έκπτωση αποθηκεύτηκε.' : 'Η προμήθεια αποθηκεύτηκε.'; refresh(); }, function (m) { flash(m); el.disabled = false; });
       };
     });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-agapprove]'), function (el) {
+      el.onclick = function () {
+        if (!el.getAttribute('data-sure')) { el.setAttribute('data-sure', '1'); el.textContent = 'Σίγουρα; Ξανά'; return; }
+        el.disabled = true; el.textContent = 'Μια στιγμή…';
+        call('save_user', { email: el.getAttribute('data-agapprove'), name: el.getAttribute('data-name'), role: 'agency', pct: '' },
+          function () { NOTE = 'Εγκρίθηκε ως agency: της στάλθηκε email με τον σύνδεσμό της και τους όρους.'; refresh(); },
+          function (m) { flash(m); el.disabled = false; el.removeAttribute('data-sure'); el.textContent = 'Έγκριση ως agency'; });
+      };
+    });
     Array.prototype.forEach.call(document.querySelectorAll('[data-agdo]'), function (el) {
       el.onclick = function () {
         if (!el.getAttribute('data-sure')) { el.setAttribute('data-sure', '1'); el.setAttribute('data-label', el.textContent); el.textContent = 'Σίγουρα; Ξανά'; return; }
@@ -408,11 +417,20 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     if (D.heartbeat) h += '<p class="muted">Τελευταίος κύκλος δημοσίευσης: ' + athens(D.heartbeat) + '</p>';
     return h;
   }
+  // Αίτηση agency (σελίδα agencies.html): κουμπί «Έγκριση ως agency» = νέος χρήστης agency (email με σύνδεσμο και όρους).
+  function agencyLead(l) {
+    if (l.plan !== 'Agency') return '';
+    var u = (D.users || []).filter(function (x) { return x.email === String(l.email || '').toLowerCase(); })[0];
+    if (D.me.role !== 'admin') return '';
+    if (u) return '<div class="kv"><b>Agency:</b> ' + (u.role === 'agency' ? 'εγκρίθηκε ✓ (Χρήστες)' : 'το email είναι ήδη χρήστης (' + esc(roleName(u.role)) + ')') + '</div>';
+    return '<div class="r2"><button class="btn s" data-agapprove="' + esc(l.email) + '" data-name="' + esc(l.business) + '">Έγκριση ως agency</button></div>' +
+      '<div class="muted">Γίνεται χρήστης «Agency» με έκπτωση 20% (αλλάζει στους Χρήστες) και της φεύγει email με τον σύνδεσμό της και τους όρους.</div>';
+  }
   function leadCard(l) {
-    return '<div class="card"><div class="row"><h3>' + esc(l.business) + '</h3>' + tag(l.status, isNew(l.status) ? 'y' : '') + '</div>' +
+    return '<div class="card"><div class="row"><h3>' + esc(l.business) + '</h3>' + (l.plan === 'Agency' ? tag('Agency', 'y') : '') + tag(l.status, isNew(l.status) ? 'y' : '') + '</div>' +
       '<div class="muted">' + esc(l.name) + ' · ' + esc(l.at) + '</div>' +
       kv([['Email', mail(l.email)], ['Τηλέφωνο', tel(l.phone)], ['Πακέτο', esc(l.plan || 'δεν ξέρει')], ['Σελίδα', esc(l.social)], ['Πηγή', esc(l.source)],
-        ['Νέα με email', esc(l.news)], ['Μήνυμα', esc(l.message)]]) + sellerSel('lead:' + l.email, l) + '</div>';
+        ['Νέα με email', esc(l.news)], ['Μήνυμα', esc(l.message)]]) + agencyLead(l) + sellerSel('lead:' + l.email, l) + '</div>';
   }
   function vLeads() { var L = D.leads.filter(hit).filter(bySeller); return search('Αναζήτηση σε επαφές…', 1) + (L.length ? L.map(leadCard).join('') : '<div class="card muted">Καμία επαφή.</div>'); }
   function setupCard(s) {
