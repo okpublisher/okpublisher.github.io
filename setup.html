@@ -72,7 +72,7 @@ legend small{font-weight:500;color:var(--mut)}
       <li>Επιλέξτε τη <b>σελίδα Facebook</b> και τον <b>λογαριασμό Instagram</b> σας και δώστε <b>πλήρη έλεγχο</b> (ή τουλάχιστον δημιουργία περιεχομένου και στατιστικά).</li>
     </ol>
     <p class="note">Το Instagram πρέπει να είναι <b>επαγγελματικός</b> λογαριασμός και <b>συνδεδεμένος</b> με τη σελίδα Facebook. Αν δεν έχετε επιχειρηματικό λογαριασμό στη Meta, φτιάχνεται δωρεάν σε 2 λεπτά από το ίδιο link.</p>
-    <p class="note"><b>Θέλετε να το κάνουμε μαζί;</b> Κανονίζουμε μια σύνδεση <b>AnyDesk</b> στον υπολογιστή σας και κάνουμε μαζί τα βήματα 2 και 3, <b>χωρίς χρέωση</b>. Τσεκάρετε «Βοήθεια» στη φόρμα πιο κάτω ή γράψτε μας στο <a href="mailto:okpublisher.gr@gmail.com">okpublisher.gr@gmail.com</a>.</p></div></li>
+    <p class="note"><b>Θέλετε να το κάνουμε μαζί;</b> Συνδεόμαστε <b>απομακρυσμένα</b> στον υπολογιστή σας και κάνουμε μαζί τα βήματα 2 και 3, <b>χωρίς χρέωση</b>. Τσεκάρετε «Βοήθεια» στη φόρμα πιο κάτω ή γράψτε μας στο <a href="mailto:okpublisher.gr@gmail.com">okpublisher.gr@gmail.com</a>.</p></div></li>
   <li><b class="n">3</b><div><h3>Φτιάξτε έναν φάκελο στο Google Drive σας</h3>
     <p>Δώστε του όποιο όνομα θέλετε (π.χ. «Υλικό social») και μοιραστείτε τον με το <b>okpublisher.gr@gmail.com</b> ως <b>Επεξεργαστή</b>. Ο φάκελος μένει δικός σας. Μέσα του φτιάχνουμε μόνοι μας τους υποφακέλους που χρειάζονται, και δεν σβήνουμε ποτέ τίποτα.</p>
     <p class="fine">Δεν έχετε λογαριασμό Google; Φτιάχνεται δωρεάν. Από το κινητό ανεβάζετε με την εφαρμογή Google Drive: αφήστε την ανοιχτή μέχρι να τελειώσει το ανέβασμα, ειδικά στα βίντεο.</p></div></li>
@@ -129,7 +129,7 @@ legend small{font-weight:500;color:var(--mut)}
     </div>
   </fieldset>
   <fieldset class="w"><legend>Βοήθεια</legend>
-    <label class="opt"><input type="checkbox" name="help_anydesk" value="ναι"> <span>Θέλω να κάνουμε μαζί την πρόσβαση στη σελίδα και τον φάκελο Drive με σύνδεση <b>AnyDesk</b> στον υπολογιστή μου, χωρίς χρέωση. Θα σας γράψουμε για μέρα και ώρα.</span></label>
+    <label class="opt"><input type="checkbox" name="help_remote" value="ναι"> <span>Θέλω να κάνουμε μαζί την πρόσβαση στη σελίδα και τον φάκελο Drive με <b>απομακρυσμένη σύνδεση</b> στον υπολογιστή μου, χωρίς χρέωση. Θα σας γράψουμε για μέρα, ώρα και πώς θα συνδεθούμε.</span></label>
   </fieldset>
   <div class="w"><label for="s-msg">Κάτι άλλο που πρέπει να ξέρουμε; <small>(προαιρετικό)</small></label><textarea id="s-msg" name="message"></textarea></div>
   <fieldset class="w"><legend>Όροι</legend>
@@ -149,7 +149,7 @@ const afmOk = a => { if (!/^\d{9}$/.test(a) || a === '000000000') return false; 
 // Κωδικός πωλητή (setup.html?p=…): πάει κρυφά με τη φόρμα, χωρίς πεδίο και χωρίς αποθήκευση στον browser.
 const ref = (q => /^[a-z0-9]{4,10}$/.test(q) ? q : '')((new URLSearchParams(location.search).get('p') || '').trim().toLowerCase());
 const btn = f.querySelector('button[type="submit"]');
-const HELP_TAG = '[Θέλει βοήθεια με AnyDesk]';
+const HELP_TAG = '[Θέλει απομακρυσμένη βοήθεια]';
 // Προσυμπληρωμένη φόρμα (σύνδεσμος από το email μας ή από το διαχειριστικό): setup.html#d=<base64url JSON>
 // { b: επιχείρηση, n: όνομα, e: email, p: πακέτο, s: Instagram/Facebook }. Ό,τι είναι μετά το # δεν φεύγει ποτέ προς server.
 (() => {
@@ -183,8 +183,8 @@ f.addEventListener('submit', async ev => {
   d.bill_afm = afm;
   if (!d.terms) { msg.textContent = 'Για να ξεκινήσουμε, χρειάζεται να αποδεχτείτε τους όρους (τετραγωνάκι «Όροι»).'; return; }
   if (d.website) return;
-  const help = d.help_anydesk === 'ναι';
-  delete d.help_anydesk;
+  const help = d.help_remote === 'ναι';
+  delete d.help_remote;
   if (help) d.message = (HELP_TAG + ' ' + (d.message || '')).trim();   // ίδιο κείμενο με το Form.gs (καμία νέα στήλη)
   d.type = 'setup'; d.lang = 'el';
   if (ref) d.ref = ref;
@@ -199,7 +199,7 @@ f.addEventListener('submit', async ev => {
   try {
     await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) });
     f.reset();
-    msg.textContent = help ? 'Ευχαριστούμε! Θα σας γράψουμε για να κανονίσουμε τη σύνδεση AnyDesk.' : 'Ευχαριστούμε! Θα σας γράψουμε για τα επόμενα βήματα.';
+    msg.textContent = help ? 'Ευχαριστούμε! Θα σας γράψουμε για να κανονίσουμε την απομακρυσμένη σύνδεση.' : 'Ευχαριστούμε! Θα σας γράψουμε για τα επόμενα βήματα.';
   } catch (e) { msg.textContent = 'Δεν στάλθηκε: γράψτε μας στο okpublisher.gr@gmail.com.'; }
   finally { btn.disabled = false; }
 });
