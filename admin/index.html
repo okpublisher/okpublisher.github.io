@@ -94,6 +94,18 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
       (navigator.share ? '<button class="btn s" data-share="' + esc(url) + '">Αποστολή…</button>' : '') +
       '<button class="btn s" data-qr="' + id + '">QR</button></div><div class="qr" id="' + id + '" data-url="' + esc(url) + '" hidden></div>';
   }
+  // Φόρμα σεταρίσματος μιας επαφής, προσυμπληρωμένη (setup_link από το script). Η agency δεν τη στέλνει στον πελάτη της.
+  var QRN = 0;
+  function setupBox(url) {
+    var id = 'qr-s' + (++QRN), ag = D.me.role === 'agency';
+    return '<details class="act"><summary>Φόρμα σεταρίσματος (προσυμπληρωμένη)</summary><div class="muted">' +
+      (ag ? 'Ανοίγει τη φόρμα με τα στοιχεία του πελάτη ήδη γραμμένα. Βάλτε το δικό σας email για τις εγκρίσεις.'
+        : 'Ανοίγει με τα στοιχεία της επαφής ήδη γραμμένα. Στείλε τη στον πελάτη ή συμπλήρωσέ τη μαζί του.') + '</div>' +
+      '<div class="r2"><a class="btn s" href="' + esc(url) + '" target="_blank" rel="noopener">Άνοιγμα</a><button class="btn s" data-copy="' + esc(url) + '">Αντιγραφή</button>' +
+      (!ag && navigator.share ? '<button class="btn s" data-share="' + esc(url) + '" data-text="Η φόρμα σεταρίσματος για να ξεκινήσουμε:">Αποστολή…</button>' : '') +
+      (ag ? '' : '<button class="btn s" data-qr="' + id + '">QR</button>') + '</div>' +
+      (ag ? '' : '<div class="qr" id="' + id + '" data-url="' + esc(url) + '" hidden></div>') + '</details>';
+  }
   function myLink() {
     var m = D.me;
     if (!m.link) return '';
@@ -305,7 +317,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
       };
     });
     Array.prototype.forEach.call(document.querySelectorAll('[data-share]'), function (el) {
-      el.onclick = function () { try { navigator.share({ title: 'okpublisher', text: 'Αυτόματες αναρτήσεις στο Instagram και στο Facebook της επιχείρησής σας:', url: el.getAttribute('data-share') }); } catch (e) { /* ακυρώθηκε */ } };
+      el.onclick = function () { try { navigator.share({ title: 'okpublisher', text: el.getAttribute('data-text') || 'Αυτόματες αναρτήσεις στο Instagram και στο Facebook της επιχείρησής σας:', url: el.getAttribute('data-share') }); } catch (e) { /* ακυρώθηκε */ } };
     });
     Array.prototype.forEach.call(document.querySelectorAll('[data-qr]'), function (el) {
       el.onclick = function () {
@@ -431,18 +443,18 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     return '<div class="card"><div class="row"><h3>' + esc(l.business) + '</h3>' + (l.plan === 'Agency' ? tag('Agency', 'y') : '') + tag(l.status, isNew(l.status) ? 'y' : '') + '</div>' +
       '<div class="muted">' + esc(l.name) + ' · ' + esc(l.at) + '</div>' +
       kv([['Email', mail(l.email)], ['Τηλέφωνο', tel(l.phone)], ['Πακέτο', esc(l.plan || 'δεν ξέρει')], ['Σελίδα', esc(l.social)], ['Πηγή', esc(l.source)],
-        ['Νέα με email', esc(l.news)], ['Μήνυμα', esc(l.message)]]) + agencyLead(l) + sellerSel('lead:' + l.email, l) + '</div>';
+        ['Νέα με email', esc(l.news)], ['Μήνυμα', esc(l.message)]]) + agencyLead(l) + (l.setup_link ? setupBox(l.setup_link) : '') + sellerSel('lead:' + l.email, l) + '</div>';
   }
   function vLeads() { var L = D.leads.filter(hit).filter(bySeller); return search('Αναζήτηση σε επαφές…', 1) + (L.length ? L.map(leadCard).join('') : '<div class="card muted">Καμία επαφή.</div>'); }
   function setupCard(s) {
     var t = s.trial && s.trial !== 'ναι' ? tag('Δωρεάν εβδομάδα: όχι', 'r') : tag('Δωρεάν εβδομάδα', 'ok');
     var b = s.bill_check && s.bill_check !== 'ΟΚ' ? tag(s.bill_check, 'r') : '';
     return '<div class="card"><div class="row"><h3>' + (s.code ? esc(s.code) + ' · ' : '') + esc(s.business) + '</h3>' + tag(s.status, isNew(s.status) ? 'y' : '') + '</div>' +
-      '<div class="muted">' + esc(s.name) + ' · ' + esc(s.at) + '</div>' + tag(String(s.plan).split(' ')[0]) + t + b +
+      '<div class="muted">' + esc(s.name) + ' · ' + esc(s.at) + '</div>' + tag(String(s.plan).split(' ')[0]) + t + b + (s.help ? tag('Θέλει AnyDesk', 'y') : '') +
       kv([['Email', mail(s.email)], ['Τηλέφωνα', esc(s.phones)], ['Instagram', esc(s.instagram)], ['Facebook', esc(s.facebook)],
         ['Ιστοσελίδα', s.website ? link(s.website, s.website.replace(/^https?:\/\//, '').replace(/\/$/, '')) : '']]) + siteInfo(s) +
       '<details><summary>Περισσότερα</summary>' + kv([['Περιοχή', esc(s.address)], ['Τι κάνει', esc(s.about)], ['Ώρες', esc(s.times)], ['Έτοιμα reels', esc(s.reels)],
-        ['Μουσική', esc(s.music)], ['Όροι', esc(s.terms)], ['Τιμολόγηση', esc(s.bill_name)], ['ΑΦΜ', esc(s.afm)]]) + '</details>' +
+        ['Μουσική', esc(s.music)], ['Άλλα', esc(s.other)], ['Όροι', esc(s.terms)], ['Τιμολόγηση', esc(s.bill_name)], ['ΑΦΜ', esc(s.afm)]]) + '</details>' +
       sellerSel(s.code ? 'setup:' + s.code : 'lead:' + s.email, s) +
       (s.group ? kv([['Ομάδα', esc(gname(s.group)) + ' — κοινό brand']]) : '') +
       (D.me.role === 'admin' && s.code ? '<details class="act"><summary>Ομάδα (αλυσίδα)</summary>' + groupSel(esc(s.code), s.group || '', 'setup_group') +

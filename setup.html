@@ -64,14 +64,15 @@ legend small{font-weight:500;color:var(--mut)}
 <ol class="steps">
   <li><b class="n">1</b><div><h3>Στείλτε μας τα στοιχεία σας</h3><p>Με τη φόρμα πιο κάτω: πακέτο, email για τις εγκρίσεις, τι κάνει η επιχείρηση, τι δεν θέλετε να γράφουμε και τα στοιχεία τιμολόγησης.</p></div></li>
   <li><b class="n">2</b><div><h3>Δώστε μας πρόσβαση στη σελίδα σας</h3>
-    <p>Χρειαζόμαστε τη σελίδα Facebook και το Instagram σας, χωρίς κωδικούς. Τα δίνετε στον επιχειρηματικό λογαριασμό μας στη Meta, και μπορείτε να τα πάρετε πίσω όποτε θέλετε.</p>
+    <p>Χρειαζόμαστε τη σελίδα Facebook και το Instagram σας, χωρίς κωδικούς. Τα δίνετε στον επιχειρηματικό λογαριασμό μας στη Meta, και μπορείτε να τα πάρετε πίσω όποτε θέλετε. <b>Αυτό το βήμα γίνεται πιο εύκολα από υπολογιστή.</b></p>
     <ol class="sub">
       <li>Ανοίξτε το <a href="https://business.facebook.com/settings">business.facebook.com/settings</a> (Meta Business Suite → Ρυθμίσεις).</li>
       <li>Συνεργάτες (Partners) → Προσθήκη → «Παραχώρηση πρόσβασης στα στοιχεία σας σε συνεργάτη» (Give a partner access to your assets).</li>
       <li>Αριθμός λογαριασμού επιχείρησης (Business portfolio ID) του okpublisher: <span class="id">501932811646627</span></li>
       <li>Επιλέξτε τη <b>σελίδα Facebook</b> και τον <b>λογαριασμό Instagram</b> σας και δώστε <b>πλήρη έλεγχο</b> (ή τουλάχιστον δημιουργία περιεχομένου και στατιστικά).</li>
     </ol>
-    <p class="note">Το Instagram πρέπει να είναι <b>επαγγελματικός</b> λογαριασμός και <b>συνδεδεμένος</b> με τη σελίδα Facebook. Αν δεν έχετε επιχειρηματικό λογαριασμό στη Meta, φτιάχνεται δωρεάν σε 2 λεπτά από το ίδιο link. Αν κολλήσετε, γράψτε μας και το κάνουμε μαζί.</p></div></li>
+    <p class="note">Το Instagram πρέπει να είναι <b>επαγγελματικός</b> λογαριασμός και <b>συνδεδεμένος</b> με τη σελίδα Facebook. Αν δεν έχετε επιχειρηματικό λογαριασμό στη Meta, φτιάχνεται δωρεάν σε 2 λεπτά από το ίδιο link.</p>
+    <p class="note"><b>Θέλετε να το κάνουμε μαζί;</b> Κανονίζουμε μια σύνδεση <b>AnyDesk</b> στον υπολογιστή σας και κάνουμε μαζί τα βήματα 2 και 3, <b>χωρίς χρέωση</b>. Τσεκάρετε «Βοήθεια» στη φόρμα πιο κάτω ή γράψτε μας στο <a href="mailto:okpublisher.gr@gmail.com">okpublisher.gr@gmail.com</a>.</p></div></li>
   <li><b class="n">3</b><div><h3>Φτιάξτε έναν φάκελο στο Google Drive σας</h3>
     <p>Δώστε του όποιο όνομα θέλετε (π.χ. «Υλικό social») και μοιραστείτε τον με το <b>okpublisher.gr@gmail.com</b> ως <b>Επεξεργαστή</b>. Ο φάκελος μένει δικός σας. Μέσα του φτιάχνουμε μόνοι μας τους υποφακέλους που χρειάζονται, και δεν σβήνουμε ποτέ τίποτα.</p>
     <p class="fine">Δεν έχετε λογαριασμό Google; Φτιάχνεται δωρεάν. Από το κινητό ανεβάζετε με την εφαρμογή Google Drive: αφήστε την ανοιχτή μέχρι να τελειώσει το ανέβασμα, ειδικά στα βίντεο.</p></div></li>
@@ -85,6 +86,7 @@ legend small{font-weight:500;color:var(--mut)}
 
 <h2 id="form">Η φόρμα σεταρίσματος</h2>
 <p class="fine">Η συνεργασία ξεκινά αφού συμφωνήσουμε γραπτά τους όρους και τη σύμβαση επεξεργασίας δεδομένων. Τα στοιχεία σας τα χρησιμοποιούμε μόνο για τη συνεργασία μας (<a href="privacy.html">πολιτική απορρήτου</a>).</p>
+<p class="note" id="pre" hidden>Συμπληρώσαμε ό,τι μας είχατε ήδη στείλει. Ελέγξτε τα και συμπληρώστε τα υπόλοιπα.</p>
 <form id="f" novalidate>
   <div><label for="s-biz">Επιχείρηση (όπως θέλετε να φαίνεται)</label><input id="s-biz" name="business" required autocomplete="organization"></div>
   <div><label for="s-name">Υπεύθυνος επικοινωνίας</label><input id="s-name" name="name" required autocomplete="name"></div>
@@ -126,6 +128,9 @@ legend small{font-weight:500;color:var(--mut)}
       <div class="w"><label for="s-baddr">Διεύθυνση έδρας <small>(οδός, αριθμός, ΤΚ, πόλη)</small></label><input id="s-baddr" name="bill_address" required autocomplete="street-address"></div>
     </div>
   </fieldset>
+  <fieldset class="w"><legend>Βοήθεια</legend>
+    <label class="opt"><input type="checkbox" name="help_anydesk" value="ναι"> <span>Θέλω να κάνουμε μαζί την πρόσβαση στη σελίδα και τον φάκελο Drive με σύνδεση <b>AnyDesk</b> στον υπολογιστή μου, χωρίς χρέωση. Θα σας γράψουμε για μέρα και ώρα.</span></label>
+  </fieldset>
   <div class="w"><label for="s-msg">Κάτι άλλο που πρέπει να ξέρουμε; <small>(προαιρετικό)</small></label><textarea id="s-msg" name="message"></textarea></div>
   <fieldset class="w"><legend>Όροι</legend>
     <label class="opt"><input type="checkbox" name="terms" value="v9-2026-11-27" required> <span>Αποδέχομαι τους <a href="terms.html" target="_blank" rel="noopener">Όρους υπηρεσίας και τη Σύμβαση επεξεργασίας δεδομένων</a> (έκδοση 9, 27/11/2026). Ισχύουν και για τη δωρεάν εβδομάδα (<a href="terms.html#a4" target="_blank" rel="noopener">Α.4</a>).</span></label>
@@ -144,6 +149,29 @@ const afmOk = a => { if (!/^\d{9}$/.test(a) || a === '000000000') return false; 
 // Κωδικός πωλητή (setup.html?p=…): πάει κρυφά με τη φόρμα, χωρίς πεδίο και χωρίς αποθήκευση στον browser.
 const ref = (q => /^[a-z0-9]{4,10}$/.test(q) ? q : '')((new URLSearchParams(location.search).get('p') || '').trim().toLowerCase());
 const btn = f.querySelector('button[type="submit"]');
+const HELP_TAG = '[Θέλει βοήθεια με AnyDesk]';
+// Προσυμπληρωμένη φόρμα (σύνδεσμος από το email μας ή από το διαχειριστικό): setup.html#d=<base64url JSON>
+// { b: επιχείρηση, n: όνομα, e: email, p: πακέτο, s: Instagram/Facebook }. Ό,τι είναι μετά το # δεν φεύγει ποτέ προς server.
+(() => {
+  const m = /(?:^|&)d=([A-Za-z0-9_-]{4,4000})(?:&|$)/.exec(location.hash.slice(1));
+  if (!m) return;
+  let o = null;
+  try {
+    let s = m[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    o = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(s), c => c.charCodeAt(0))));
+  } catch (e) { o = null; }
+  try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* μένει όπως είναι */ }
+  if (!o || typeof o !== 'object') return;
+  let n = 0;
+  const set = (name, v) => { const el = f.elements[name]; v = String(v == null ? '' : v).trim().slice(0, 300); if (el && v && !el.value) { el.value = v; n++; } };
+  set('business', o.b); set('name', o.n); set('email', o.e);
+  const so = String(o.s || '').trim();
+  if (/instagram\.com|^@/i.test(so)) set('instagram', so); else if (/facebook\.com|fb\.com|fb\.me/i.test(so)) set('facebook', so);
+  const opt = o.p && Array.from(f.elements.plan.options).find(x => x.text.split(' ')[0] === String(o.p));
+  if (opt) { f.elements.plan.value = opt.value; n++; }
+  if (n) document.getElementById('pre').hidden = false;
+})();
 f.addEventListener('submit', async ev => {
   ev.preventDefault();
   if (btn.disabled) return;   // διπλό πάτημα: μία αποστολή
@@ -155,6 +183,9 @@ f.addEventListener('submit', async ev => {
   d.bill_afm = afm;
   if (!d.terms) { msg.textContent = 'Για να ξεκινήσουμε, χρειάζεται να αποδεχτείτε τους όρους (τετραγωνάκι «Όροι»).'; return; }
   if (d.website) return;
+  const help = d.help_anydesk === 'ναι';
+  delete d.help_anydesk;
+  if (help) d.message = (HELP_TAG + ' ' + (d.message || '')).trim();   // ίδιο κείμενο με το Form.gs (καμία νέα στήλη)
   d.type = 'setup'; d.lang = 'el';
   if (ref) d.ref = ref;
   if (d.site_url) {   // ιστοσελίδα: με https:// αν λείπει· αν δεν μοιάζει με διεύθυνση, ζητάμε διόρθωση
@@ -168,7 +199,7 @@ f.addEventListener('submit', async ev => {
   try {
     await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(d) });
     f.reset();
-    msg.textContent = 'Ευχαριστούμε! Θα σας γράψουμε για τα επόμενα βήματα.';
+    msg.textContent = help ? 'Ευχαριστούμε! Θα σας γράψουμε για να κανονίσουμε τη σύνδεση AnyDesk.' : 'Ευχαριστούμε! Θα σας γράψουμε για τα επόμενα βήματα.';
   } catch (e) { msg.textContent = 'Δεν στάλθηκε: γράψτε μας στο okpublisher.gr@gmail.com.'; }
   finally { btn.disabled = false; }
 });
