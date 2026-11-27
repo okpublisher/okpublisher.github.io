@@ -279,6 +279,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
   // «Πηγή»: από ποιον σύνδεσμο ήρθε ή ποιος τον ανέθεσε. Η απόδειξη ότι ο πελάτης ανήκει σε πωλητή.
   function srcText(o) {
     var s = o.src || {}, d = String(s.link_at || '').split(' ')[0];
+    if (s.how === 'referral') return 'Σύσταση πελάτη' + (D.me.role === 'admin' ? ': ' + esc(s.link) : '') + (d ? ' · ' + esc(d) : '');
     if (D.me.role === 'agency') return s.how === 'link' ? 'Από τον σύνδεσμό σας' + (d ? ' · ' + esc(d) : '') : 'Πελάτης σας';
     if (D.me.role !== 'admin') return s.how === 'link' ? 'Από τον σύνδεσμό σου' + (d ? ' · ' + esc(d) : '') : 'Σου ανατέθηκε';
     if (s.how === 'link') return 'Σύνδεσμος: ' + esc(s.name) + (d ? ' · ' + esc(d) : '');
@@ -488,6 +489,8 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     R.push(['Χρέωση', bl]);
     if (c.agency && D.me.role !== 'agency') R.push(['Agency', [(c.agency_name || c.agency) + ' — όλα τα email του πάνε μόνο εκεί', '']]);
     else if (!c.agency) R.push(['Πωλητής', [srcText(c).replace(/<[^>]+>/g, ''), '']]);
+    if (c.referral && D.me.role === 'admin') R.push(['Συστάσεις', [(c.referral.count ? (c.referral.count === 1 ? '1 επιχείρηση ξεκίνησε' : c.referral.count + ' επιχειρήσεις ξεκίνησαν') + ' από τον σύνδεσμό του' : 'καμία ακόμα') +
+      (c.referral.credit_eur ? ' · έκπτωση σε αναμονή ' + eur(c.referral.credit_eur) : ''), c.referral.credit_eur ? 'ok' : '']]);
     R.push(['Ομάδα', c.group ? [gname(c.group) + ' — κοινό brand', ''] : ['Καμία — δικό του brand', '']]);
     var who = !c.agency ? 'ο πελάτης απαντά' : D.me.role === 'agency' ? 'απαντάτε εσείς' : 'απαντά η agency';
     R.push(['Έγκριση', c.no_approval ? ['Χωρίς έγκριση — μόνο ενημερωτικό email', ''] : ['Με email — ' + who + ' «ΟΚ»', '']]);
@@ -504,7 +507,8 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     var next = (D.queue || []).filter(function (p) { return p.client === c.key && new Date(p.at) > new Date(); })[0];
     return '<div class="card"><div class="row"><h3>' + (c.code ? esc(c.code) + ' · ' : '') + esc(c.name) + '</h3><span class="muted">' + esc(c.key) + '</span></div>' +
       facts(c) + kv([['Instagram', esc(c.accounts && c.accounts.instagram)], ['Facebook', esc(c.accounts && c.accounts.facebook)],
-        ['Επόμενη δημοσίευση', next ? athens(next.at) + ' · ' + esc(next.type) : '']].concat(ap, bill)) +
+        ['Επόμενη δημοσίευση', next ? athens(next.at) + ' · ' + esc(next.type) : ''],
+        ['Σύνδεσμος σύστασης', c.referral && c.referral.link && D.me.role === 'admin' ? link(c.referral.link, c.referral.link.replace(/^https:\/\//, '')) : '']].concat(ap, bill)) +
       (c.note ? '<details><summary>Σημειώσεις</summary><div class="kv">' + esc(c.note) + '</div></details>' : '') + sellerPick('client:' + c.key, c) +
       actions(c) + '</div>';
   }
