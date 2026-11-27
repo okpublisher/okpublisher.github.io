@@ -234,6 +234,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
       }).join('') +
       '<label for="f-music">Μουσική στα reels <small>(ορχηστρική, με άδεια για εμπορική χρήση)</small></label><select id="f-music">' +
       D.music.map(function (m) { return '<option' + (m === p.music ? ' selected' : '') + '>' + esc(m) + '</option>'; }).join('') + '</select>' +
+      yn('f-ms', 'Μουσική στα stories', p.music_stories, '(στο ίδιο ύφος)') +
       '<button class="btn" id="save">Αποθήκευση</button></div>';
     h += '<div class="card"><h3>Σελίδα Facebook και Instagram</h3>' + facts([['Facebook', esc(c.accounts.facebook) || '—'], ['Instagram', esc(c.accounts.instagram) || '—']]) +
       '<details><summary>Αλλάξατε σελίδα ή λογαριασμό;</summary><p class="muted">Γράψτε τη νέα σελίδα. Μετά δώστε μας πρόσβαση σε αυτήν όπως στο σετάρισμα (<a href="../setup.html" target="_blank" rel="noopener">βήμα 2</a>). ' +
@@ -252,11 +253,17 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     }).join('') + '</div>';
     return h;
   }
+  // Ναι / Όχι (μουσική στα stories, από 28/11/2026)
+  function yn(id, label, v, hint) {
+    return '<label for="' + id + '">' + esc(label) + (hint ? ' <small>' + esc(hint) + '</small>' : '') + '</label><select id="' + id + '">' +
+      ['Ναι', 'Όχι'].map(function (x) { return '<option' + (x === v ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select>';
+  }
   function radio(n) { var x = document.querySelector('input[name="' + n + '"]:checked'); return x ? x.value : ''; }
   function saveInfo(btn) {
     var f = { name: $('f-name').value, email: $('f-email').value, approvers: $('f-appr').value, phones: $('f-phones').value, shop_address: $('f-shop').value,
       area: $('f-area').value, website: $('f-web').value, reviews: $('f-rev').value, about: $('f-about').value, avoid: $('f-avoid').value,
-      times: radio('f-times'), post_time: $('f-pt').value, story_time: $('f-st').value, reels: radio('f-reels'), music: $('f-music').value };
+      times: radio('f-times'), post_time: $('f-pt').value, story_time: $('f-st').value, reels: radio('f-reels'), music: $('f-music').value,
+      music_stories: $('f-ms').value };
     btn.disabled = true; btn.textContent = 'Μια στιγμή…';
     call('save', { fields: f }, function (r) {
       if (r.relogin) { S = null; D = null; store('okp_client', null); store('okp_client_email', f.email.trim()); showLogin(r.message); return; }

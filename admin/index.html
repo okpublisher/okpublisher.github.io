@@ -390,6 +390,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
         if (a === 'client_group' || a === 'setup_group') { o.group = v('gr'); o.name = v('gn'); }
         if (a === 'client_agency') o.email = v('ag');
         if (a === 'client_log_done') o.id = el.getAttribute('data-id');
+        if (a === 'client_music') o.stories = v('ms');
         if (a === 'setup_group') o = { code: K, group: o.group, name: o.name };
         el.disabled = true; el.textContent = 'Μια στιγμή…';
         call(a, o, function (r) { NOTE = r.message || 'Έγινε.'; refresh(); },
@@ -456,7 +457,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
       kv([['Email', mail(s.email)], ['Τηλέφωνα', esc(s.phones)], ['Instagram', esc(s.instagram)], ['Facebook', esc(s.facebook)], ['Διεύθυνση καταστήματος', esc(s.shop_address)],
         ['Ιστοσελίδα', s.website ? link(s.website, s.website.replace(/^https?:\/\//, '').replace(/\/$/, '')) : '']]) + siteInfo(s) +
       '<details><summary>Περισσότερα</summary>' + kv([['Περιοχή', esc(s.address)], ['Τι κάνει', esc(s.about)], ['Ώρες', esc(s.times)], ['Έτοιμα reels', esc(s.reels)],
-        ['Μουσική', esc(s.music)], ['Άλλα', esc(s.other)], ['Όροι', esc(s.terms)], ['Τιμολόγηση', esc(s.bill_name)], ['ΑΦΜ', esc(s.afm)]]) + '</details>' +
+        ['Μουσική', esc(s.music)], ['Μουσική στα stories', esc(s.music_stories)], ['Άλλα', esc(s.other)], ['Όροι', esc(s.terms)], ['Τιμολόγηση', esc(s.bill_name)], ['ΑΦΜ', esc(s.afm)]]) + '</details>' +
       sellerSel(s.code ? 'setup:' + s.code : 'lead:' + s.email, s) +
       (s.group ? kv([['Ομάδα', esc(gname(s.group)) + ' — κοινό brand']]) : '') +
       (D.me.role === 'admin' && s.code ? '<details class="act"><summary>Ομάδα (αλυσίδα)</summary>' + groupSel(esc(s.code), s.group || '', 'setup_group') +
@@ -506,6 +507,7 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     if (c.referral && D.me.role === 'admin') R.push(['Συστάσεις', [(c.referral.count ? (c.referral.count === 1 ? '1 επιχείρηση ξεκίνησε' : c.referral.count + ' επιχειρήσεις ξεκίνησαν') + ' από τον σύνδεσμό του' : 'καμία ακόμα') +
       (c.referral.credit_eur ? ' · έκπτωση σε αναμονή ' + eur(c.referral.credit_eur) : ''), c.referral.credit_eur ? 'ok' : '']]);
     R.push(['Ομάδα', c.group ? [gname(c.group) + ' — κοινό brand', ''] : ['Καμία — δικό του brand', '']]);
+    if (c.music) R.push(['Μουσική', ['Stories: ' + (c.music.stories ? 'με μουσική' : 'χωρίς'), '']]);
     var who = !c.agency ? 'ο πελάτης απαντά' : D.me.role === 'agency' ? 'απαντάτε εσείς' : 'απαντά η agency';
     R.push(['Έγκριση', c.no_approval ? ['Χωρίς έγκριση — μόνο ενημερωτικό email', ''] : ['Με email — ' + who + ' «ΟΚ»', '']]);
     if (d && (d.posts.length || d.stories.length)) R.push(['Ημέρες', [[d.posts.length ? 'Αναρτήσεις ' + dshort(d.posts) + (d.post_time ? ' ' + d.post_time : '') : '',
@@ -524,7 +526,18 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
         ['Επόμενη δημοσίευση', next ? athens(next.at) + ' · ' + esc(next.type) : ''],
         ['Σύνδεσμος σύστασης', c.referral && c.referral.link && D.me.role === 'admin' ? link(c.referral.link, c.referral.link.replace(/^https:\/\//, '')) : '']].concat(ap, bill)) +
       (c.note ? '<details><summary>Σημειώσεις</summary><div class="kv">' + esc(c.note) + '</div></details>' : '') + fromClient(c) + sellerPick('client:' + c.key, c) +
-      actions(c) + '</div>';
+      actions(c) + musicBox(c) + '</div>';
+  }
+  // Μουσική στα stories (από 28/11/2026): ο διαχειριστής και η agency για τους δικούς της πελάτες. Από το επόμενο πρόγραμμα.
+  function musicBox(c) {
+    if (c.test || c.has_config === false || !(D.me.role === 'admin' || (D.me.role === 'agency' && c.agency))) return '';
+    var k = esc(c.key), m = c.music || {};
+    var sel = function (id, on, what) { return '<select id="' + id + '-' + k + '"><option value="Ναι"' + (on ? ' selected' : '') + '>' + what + ': με μουσική</option>' +
+      '<option value="Όχι"' + (on ? '' : ' selected') + '>' + what + ': χωρίς</option></select>'; };
+    return '<details class="act"><summary>Μουσική</summary>' +
+      '<div class="kv muted">Ισχύει από το επόμενο πρόγραμμα.</div>' +
+      '<div class="r2">' + sel('ms', m.stories, 'Stories') +
+      '<button class="btn s" data-do="client_music" data-client="' + k + '">Αποθήκευση</button></div></details>';
   }
   // Αλλαγές και αιτήματα από τη σελίδα πελάτη (okpublisher.gr/client). Τα αιτήματα θέλουν «Έγινε» (μόνο admin).
   function fromClient(c) {
