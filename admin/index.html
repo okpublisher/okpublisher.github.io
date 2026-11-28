@@ -47,6 +47,9 @@ input,select{font:16px Manrope,sans-serif;padding:11px 12px;border:1.5px solid #
 .btn{font:800 16px Manrope,sans-serif;background:var(--v);color:#fff;border:0;border-radius:999px;padding:12px 22px;cursor:pointer;width:100%}
 .btn.s{width:auto;background:#fff;color:var(--v);border:1.5px solid var(--v);padding:6px 12px;font-size:13px}.btn:disabled{opacity:.55}
 .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:6px}.stat .card{margin:0;text-align:center}
+.rt-bar{height:10px;background:var(--l);border-radius:99px;overflow:hidden;margin:8px 0 4px}.rt-bar i{display:block;height:100%;border-radius:99px}
+.rt-days{display:flex;gap:6px;align-items:flex-end;height:100px;margin:14px 0 6px}.rt-days div{flex:1;text-align:center;font-size:11px;color:var(--g)}
+.rt-days span{display:block;border-radius:6px 6px 2px 2px;margin:0 auto 3px;width:70%;min-height:2px}
 .stat b{display:block;font:800 28px "M PLUS Rounded 1c",Manrope,sans-serif;color:var(--v)}
 .err{background:#fde7e7;color:var(--r);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:14px}
 .search{margin:0 0 10px}.login{max-width:420px;margin:32px auto}.login p{margin:0 0 12px}.grid2{display:grid;gap:10px}
@@ -423,6 +426,9 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
       if (c.pkg_change && !(c.billing && c.billing.change)) probs.push(esc(cname(c.key)) + ': αλλαγή πακέτου σε ' + esc(c.pkg_change.plan) + ' από ' + months(c.pkg_change.from) + ' — config στην παραγωγή της 20ής');
       if (c.billing && c.billing.change) probs.push(esc(cname(c.key)) + ': αλλαγή πακέτου σε ' + esc(c.billing.change.plan) + ' από ' + (c.billing.change.from_label || months(c.billing.change.from)) + ' — config (πακέτο, ημέρες) στην παραγωγή εκείνης της περιόδου');
     });
+    var rt = D.runtime, rtY = rt && rt.days.length > 1 ? rt.days[rt.days.length - 2] : null, rtT = rt ? rt.days[rt.days.length - 1] : null;
+    if (rtT && rtT.min >= rt.limit_min * 0.6) probs.push('Αυτόματες εργασίες σήμερα: ' + Math.round(rtT.min) + '′ από ' + rt.limit_min + '′ (όριο της Google)');
+    else if (rtY && rtY.min >= rt.limit_min * 0.8) probs.push('Αυτόματες εργασίες χθες: ' + Math.round(rtY.min) + '′ από ' + rt.limit_min + '′ (όριο της Google)');
     if (D.heartbeat && Date.now() - new Date(D.heartbeat).getTime() > 40 * 60000) probs.unshift('Ο κύκλος δημοσίευσης δεν έχει τρέξει από ' + athens(D.heartbeat));
     var h = (D.me.role === 'admin' ? '' : myLink()) + '<div class="stat"><div class="card"><b>' + nl.length + '</b>νέες επαφές</div><div class="card"><b>' + ns.length + '</b>νέα σεταρίσματα</div>' +
       '<div class="card"><b>' + posts.length + '</b>δημοσιεύσεις σήμερα</div><div class="card"><b>' + (D.clients || []).filter(function (c) { return c.live; }).length + '</b>ενεργοί πελάτες</div></div>';
@@ -430,7 +436,30 @@ var API = 'https://script.google.com/macros/s/AKfycby0Y9ODJM97SqPltW2Ig07dYkwZih
     if (ns.length) h += '<h2>Νέα σεταρίσματα</h2>' + ns.slice(0, 5).map(setupCard).join('');
     if (nl.length) h += '<h2>Νέες επαφές</h2>' + nl.slice(0, 5).map(leadCard).join('');
     h += '<h2>Σήμερα δημοσιεύονται</h2>' + (posts.length ? posts.map(postCard).join('') : '<div class="card muted">Τίποτα για σήμερα.</div>');
+    if (rt) h += runtimeCard(rt);
     if (D.heartbeat) h += '<p class="muted">Τελευταίος κύκλος δημοσίευσης: ' + athens(D.heartbeat) + '</p>';
+    return h;
+  }
+  // Χρόνος αυτόματων εργασιών (όριο Google 90′/μέρα σε δωρεάν Gmail) και έσοδα: τα δύο σήματα για το «πότε web app» (από 28/11/2026).
+  function runtimeCard(rt) {
+    var col = function (m) { return m >= rt.limit_min * 0.8 ? 'var(--r)' : m >= rt.limit_min * 0.6 ? '#C77700' : 'var(--ok)'; };
+    var t = rt.days[rt.days.length - 1], pct = Math.min(100, Math.round(t.min / rt.limit_min * 100));
+    var top = Math.max(rt.limit_min * 0.25, Math.max.apply(null, rt.days.map(function (d) { return d.min; })));
+    var shown = rt.days.filter(function (d) { return d.runs; });
+    var avg = shown.length > 1 ? shown.slice(0, -1).reduce(function (a, d) { return a + d.min; }, 0) / (shown.length - 1) : t.min;
+    var h = '<h2>Αυτόματες εργασίες και έσοδα</h2><div class="card"><div class="row"><b>Σήμερα: ' + t.min.toFixed(1).replace('.', ',') + '′ από ' + rt.limit_min + '′</b><span class="muted">' + pct + '%</span></div>' +
+      '<div class="rt-bar"><i style="width:' + Math.max(1, pct) + '%;background:' + col(t.min) + '"></i></div>' +
+      '<div class="muted">Η Google δίνει ' + rt.limit_min + ' λεπτά τη μέρα για όλες τις αυτόματες εργασίες (δωρεάν Gmail). Αν τελειώσουν, οι δημοσιεύσεις σταματούν ως την επόμενη μέρα.</div>' +
+      '<div class="rt-days">' + rt.days.map(function (d) {
+        return '<div title="' + esc(d.day) + ': ' + d.min + '′"><span style="height:' + Math.max(2, Math.round(d.min / top * 52)) + 'px;background:' + col(d.min) + '"></span>' +
+          esc(d.day.slice(8)) + '/' + esc(String(+d.day.slice(5, 7))) + '<br><b>' + Math.round(d.min) + '′</b></div>';
+      }).join('') + '</div>' +
+      kv([['Πελάτες', String(rt.clients)], ['Πληρωμένες συνδρομές', String(rt.revenue.subs) + ' · ' + eur(rt.revenue.net_eur) + ' τον μήνα καθαρά (χωρίς ΦΠΑ)'],
+        ['Μέσος όρος', shown.length > 1 ? avg.toFixed(1).replace('.', ',') + '′ τη μέρα (' + (shown.length - 1) + ' ολόκληρες ημέρες)' : '']]) +
+      '<details><summary>Ανά εργασία (σήμερα)</summary>' + kv(Object.keys(rt.labels).map(function (k) {
+        var x = t.tasks[k];
+        return [rt.labels[k], x ? x.min.toFixed(1).replace('.', ',') + '′ · ' + x.runs + ' φορές · έως ' + x.max_s + '″' : '—'];
+      })) + '</details></div>';
     return h;
   }
   // Αίτηση agency (σελίδα agencies.html): κουμπί «Έγκριση ως agency» = νέος χρήστης agency (email με σύνδεσμο και όρους).
